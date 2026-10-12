@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomo;
 
+import android.util.Size;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,11 +50,23 @@ public class Autonomo4 extends LinearOpMode {
     private static final int QUANTIDADE_LANCAMENTOS = 3;
 
     private static final double TICKS_POR_REV_MOTOR = 28.0;
-    private static final double REDUCAO = 20.0;
+
+    // UltraPlanetary REV: relacoes reais dos cartuchos, nao as nominais.
+    private static final double REDUCAO_CARTUCHO_4_PARA_1 = 3.61;
+    private static final double REDUCAO_CARTUCHO_5_PARA_1 = 5.23;
+    private static final double REDUCAO_TOTAL =
+            REDUCAO_CARTUCHO_4_PARA_1 * REDUCAO_CARTUCHO_5_PARA_1;
+
     private static final double DIAMETRO_RODA_MM = 90.0;
+
+    // Ajustar somente depois de medir no robo real:
+    // fator = distancia_comandada / distancia_real_medida.
+    private static final double FATOR_CALIBRACAO_DISTANCIA = 1.0;
+
     private static final double TICKS_POR_MM =
-            (TICKS_POR_REV_MOTOR * REDUCAO)
-                    / (Math.PI * DIAMETRO_RODA_MM);
+            ((TICKS_POR_REV_MOTOR * REDUCAO_TOTAL)
+                    / (Math.PI * DIAMETRO_RODA_MM))
+                    * FATOR_CALIBRACAO_DISTANCIA;
 
     private static final double KP_VIRADA = 0.012;
     private static final double KI_VIRADA = 0.00012;
@@ -96,7 +110,16 @@ public class Autonomo4 extends LinearOpMode {
     private static final double TEMPO_ENTRE_PECAS = 0.15;
 
     private static final String NOME_WEBCAM = "Webcam 1";
+
+    // A Logitech C270 possui calibracao oficial do SDK em 640x480.
+    private static final int CAMERA_LARGURA = 640;
+    private static final int CAMERA_ALTURA = 480;
     private static final int DECIMACAO_APRILTAG = 2;
+
+    // Corrige eventual desalinhamento mecanico entre o eixo optico
+    // da camera e o eixo real de lancamento do robo.
+    // Positivo desloca o alvo desejado para bearing positivo.
+    private static final double OFFSET_BEARING_CAMERA_GRAUS = 0.0;
 
     // Clusters oficiais BIOBUZZ 2026-2027.
     private static final String CLUSTER_RED_SCORING = "RED SCORING";
@@ -257,6 +280,8 @@ public class Autonomo4 extends LinearOpMode {
 
             visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, NOME_WEBCAM))
+                    .setCameraResolution(
+                            new Size(CAMERA_LARGURA, CAMERA_ALTURA))
                     .addProcessor(aprilTag)
                     .build();
 
@@ -760,7 +785,11 @@ public class Autonomo4 extends LinearOpMode {
             visaoUsada = true;
             movimentoIniciado = true;
 
-            if (Math.abs(alvo.bearing) <= TOLERANCIA_BEARING_GRAUS) {
+            double erroBearing = normalizarAngulo(
+                    alvo.bearing - OFFSET_BEARING_CAMERA_GRAUS
+            );
+
+            if (Math.abs(erroBearing) <= TOLERANCIA_BEARING_GRAUS) {
                 pararTracao();
 
                 if (inicioEstavel < 0.0) {
@@ -778,7 +807,7 @@ public class Autonomo4 extends LinearOpMode {
                 inicioEstavel = -1.0;
 
                 double comando = limitar(
-                        KP_ALINHAMENTO_VISAO * alvo.bearing,
+                        KP_ALINHAMENTO_VISAO * erroBearing,
                         -MAX_POTENCIA_ALINHAMENTO,
                         MAX_POTENCIA_ALINHAMENTO
                 );
@@ -786,7 +815,7 @@ public class Autonomo4 extends LinearOpMode {
                 if (Math.abs(comando) < MIN_POTENCIA_ALINHAMENTO) {
                     comando = Math.copySign(
                             MIN_POTENCIA_ALINHAMENTO,
-                            alvo.bearing
+                            erroBearing
                     );
                 }
 
@@ -798,7 +827,8 @@ public class Autonomo4 extends LinearOpMode {
                 telemetry.addData("Visao", alvo.tipo);
                 telemetry.addData("Alvo", alvo.nome);
                 telemetry.addData("Range", "%.1f in", alvo.range);
-                telemetry.addData("Bearing", "%.2f deg", alvo.bearing);
+                telemetry.addData("Bearing bruto", "%.2f deg", alvo.bearing);
+                telemetry.addData("Erro bearing", "%.2f deg", erroBearing);
                 telemetry.addData("Yaw alvo", "%.2f deg", alvo.yaw);
                 telemetry.update();
                 telemetriaTimer.reset();
