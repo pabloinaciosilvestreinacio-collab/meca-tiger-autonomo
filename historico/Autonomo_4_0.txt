@@ -99,6 +99,21 @@ public class Autonomo4 extends LinearOpMode {
     private static final String NOME_WEBCAM = "Webcam 1";
     private static final int DECIMACAO_APRILTAG = 2;
 
+    // Clusters oficiais BIOBUZZ 2026-2027.
+    private static final String CLUSTER_RED_SCORING = "RED SCORING";
+    private static final String CLUSTER_RED_AUDIENCE = "RED AUDIENCE";
+    private static final String CLUSTER_BLUE_SCORING = "BLUE SCORING";
+    private static final String CLUSTER_BLUE_AUDIENCE = "BLUE AUDIENCE";
+
+    private static final String[] CLUSTERS_BIOBUZZ = {
+            CLUSTER_RED_SCORING,
+            CLUSTER_RED_AUDIENCE,
+            CLUSTER_BLUE_SCORING,
+            CLUSTER_BLUE_AUDIENCE
+    };
+
+    // null = aceitar qualquer cluster BIOBUZZ que esteja em posicao pontuavel.
+    // Para travar um alvo, use uma das quatro constantes acima.
     private static final String CLUSTER_DESEJADO = null;
     private static final int TAG_INDIVIDUAL_DESEJADA = -1;
 
@@ -850,8 +865,19 @@ public class Autonomo4 extends LinearOpMode {
                     nome = cluster.metadata.name;
                 }
 
+                if (!ehClusterBiobuzz(nome)) {
+                    continue;
+                }
+
                 if (CLUSTER_DESEJADO != null
-                        && !CLUSTER_DESEJADO.equals(nome)) {
+                        && !CLUSTER_DESEJADO.equalsIgnoreCase(nome)) {
+                    continue;
+                }
+
+                // No BIOBUZZ, uma CELL pontuavel fica aproximadamente
+                // com o cluster "de pe" para a camera: |roll| < 90 graus.
+                if (!Double.isFinite(cluster.ftcPose.roll)
+                        || Math.abs(cluster.ftcPose.roll) >= 90.0) {
                     continue;
                 }
 
@@ -861,7 +887,8 @@ public class Autonomo4 extends LinearOpMode {
                         "Cluster",
                         cluster.ftcPose.range,
                         cluster.ftcPose.bearing,
-                        cluster.ftcPose.yaw
+                        cluster.ftcPose.yaw,
+                        cluster.ftcPose.roll
                 );
 
                 if (dadosVisaoValidos(candidato)
@@ -892,7 +919,8 @@ public class Autonomo4 extends LinearOpMode {
                         "Tag individual",
                         tag.ftcPose.range,
                         tag.ftcPose.bearing,
-                        tag.ftcPose.yaw
+                        tag.ftcPose.yaw,
+                        tag.ftcPose.roll
                 );
 
                 if (dadosVisaoValidos(candidato)
@@ -907,14 +935,30 @@ public class Autonomo4 extends LinearOpMode {
         return melhorCluster != null ? melhorCluster : melhorTag;
     }
 
+    private boolean ehClusterBiobuzz(String nome) {
+        if (nome == null) {
+            return false;
+        }
+
+        for (String cluster : CLUSTERS_BIOBUZZ) {
+            if (cluster.equalsIgnoreCase(nome)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private boolean dadosVisaoValidos(AlvoVisao alvo) {
         return alvo != null
                 && Double.isFinite(alvo.range)
                 && Double.isFinite(alvo.bearing)
                 && Double.isFinite(alvo.yaw)
+                && Double.isFinite(alvo.roll)
                 && alvo.range > 0.0
                 && Math.abs(alvo.bearing) <= 180.0
-                && Math.abs(alvo.yaw) <= 180.0;
+                && Math.abs(alvo.yaw) <= 180.0
+                && Math.abs(alvo.roll) <= 180.0;
     }
 
     private boolean lancarPecasPorTempo(int quantidade) {
@@ -1117,6 +1161,7 @@ public class Autonomo4 extends LinearOpMode {
         private final double range;
         private final double bearing;
         private final double yaw;
+        private final double roll;
 
         private AlvoVisao(
                 String chave,
@@ -1124,13 +1169,15 @@ public class Autonomo4 extends LinearOpMode {
                 String tipo,
                 double range,
                 double bearing,
-                double yaw) {
+                double yaw,
+                double roll) {
             this.chave = chave;
             this.nome = nome;
             this.tipo = tipo;
             this.range = range;
             this.bearing = bearing;
             this.yaw = yaw;
+            this.roll = roll;
         }
     }
 
