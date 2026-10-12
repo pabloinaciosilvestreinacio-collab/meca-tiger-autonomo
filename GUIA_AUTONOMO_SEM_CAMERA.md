@@ -9,8 +9,13 @@
 | 3.2 | `Autonomo32.java` | Derivada angular correta, proteção de travamento, distância pela média | Não |
 | 3.3 | `Autonomo33.java` | Proteção contra divergência de motores/rumo, limites e orçamento global auditável | Não |
 | 3.4 | `Autonomo34.java` | 3.3 + modos de teste sem acionamento de mecanismos | Não |
+| 3.5 | `Autonomo35.java` | 3.4 + teste isolado do lançador e telemetria da duração das etapas | Não |
 
-Cada arquivo tem backup imutável correspondente em `historico/Autonomo_3_1.txt`, `...3_2.txt`, `...3_3.txt`, `...3_4.txt`; relatórios individuais `VALIDACAO_Autonomo_3_N.md`.
+Cada arquivo tem backup versionado correspondente em `historico/Autonomo_3_1.txt`, `...3_2.txt`, `...3_3.txt`, `...3_4.txt`, `...3_5.txt`; relatórios individuais `VALIDACAO_Autonomo_3_N.md`.
+
+### Interface do autônomo 3.5 (modo de bancada)
+
+No INIT: **B** escolhe teste de giro de 20° e retorno, **X** escolhe 350 mm, **Y** escolhe sequência completa, e **D-pad para cima** escolhe teste exclusivo do lançador MI/MS (pode lançar peças). Após escolher, pressionar **A** para confirmar e **START** para iniciar. Sem confirmação, nenhum movimento é executado. Os modos de giro/avanço não acionam MI/MS.
 
 ## Fluxo de execução do autônomo completo
 1. Mapear `MD` (direito), `ME` (esquerdo), `MI` (coleta/alimentação), `MS` (lançador) e `imu` (REV Hub).
@@ -71,7 +76,7 @@ Giro 5 s + deslocamento 10 s + eventual correção 1,5 s + giro 5 s + lançament
 | B — Giro curto | `Autonomo 3.4 - Testes`, B + A, START; giro +20/-20 em área livre | yaw e ângulo real, timeout, sentido | Giro no sentido esperado, sem falha |
 | C — Deslocamento curto | `Autonomo 3.4 - Testes`, X + A, START; 350 mm | distância real, ticks esquerdo/direito, yaw e derrapagem | Dentro da tolerância que a equipe definir previamente |
 | D — Percurso 2 m | Executar versão controlada na configuração completa após aprovar B/C | diferença de ticks, heading e desvio lateral | Sem colisão, sem watchdog, repetível |
-| E — MI e MS | Sem deslocamento, com proteção mecânica, verificar alimentação e RPM/velocidade se houver sensor | tempo de aquecimento, peças realmente alimentadas e saída | Três ciclos confiáveis, sem travamento |
+| E — MI e MS | `Autonomo 3.5 - Bancada`: D-pad CIMA + A; START, sem deslocamento. **Risco de disparar peças.** | tempo de aquecimento, peças realmente alimentadas e saída | Três ciclos confiáveis, sem travamento |
 | F — Sequência completa | `Autonomo 3.4 - Testes`, Y + A, START | logs, tempo total e trajetórias, peças efetivamente lançadas | Conclusão em até 29 s com segurança |
 | G — Comparação com câmera | Mesmo ponto de partida, piso, peças, bateria e alinhamento; executar autônomo com C270 separadamente | erros por trajetória, taxa real de acerto e tempo | Comparação empírica, não apenas simulação |
 
@@ -84,7 +89,7 @@ node tests/autonomo32_travel_model.mjs
 node tests/autonomo_sem_camera_3x.mjs
 node tests/auditoria_autonomo_3x.mjs
 ```
-O workflow `.github/workflows/ftc-sem-camera.yml` tenta compilar as versões **3.1–3.4** no projeto FTC SDK oficial usando `./gradlew :TeamCode:assembleDebug`. Só declarar compilação real aprovada após obter o log e status de sucesso do GitHub Actions ou Android Studio. Os testes JS são **modelos artificiais**.
+O workflow `.github/workflows/ftc-sem-camera.yml` tenta compilar as versões **3.1–3.5** no projeto FTC SDK oficial usando `./gradlew :TeamCode:assembleDebug`. Só declarar compilação real aprovada após obter o log e status de sucesso do GitHub Actions ou Android Studio. Os testes JS são **modelos artificiais**.
 
 ## Modelo para diário de testes
 ```text
