@@ -1,5 +1,18 @@
 # Meca Tiger - Autonomo FTC
 
+## Relatório-mestre integral — desenvolvimento completo do Autônomo
+
+**[ABRIR O DOSSIÊ TÉCNICO COMPLETO — VERSÕES 2 A 5.1](DOSSIER_TECNICO_COMPLETO_AUTONOMO.md)**
+
+Relatório consolidado de toda a programação do Autônomo FTC Meca Tiger, com decisões de engenharia, alterações por versão, descrição dos métodos Java, PID, encoders, IMU, C270, AprilTags, coleta, lançamento, limites, simulações, builds e manual de calibração.
+
+- **[Índice dos 12 códigos Java/históricos integrais e seus hashes](INDICE_COMPLETO_CODIGOS_AUTONOMO.md)**.
+- **[Manual Geral de Calibração e Testes](MANUAL_GERAL_CALIBRACAO_TESTES.md)** — instruções operacionais completas.
+- **[Relatório Geral de Validação](RELATORIO_GERAL_VALIDACAO_SOFTWARE.md)** — evidências auditáveis.
+- **[Modelo de Registro de Ensaio](MODELO_REGISTRO_ENSAIO_AUTONOMO.md)** — preencher a cada teste físico.
+
+**Situação:** compilação FTC real aprovada para as classes sem e com câmera no [Actions #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887); testes físicos com medidas ainda pendentes.
+
 ## Documentação geral — todas as versões (2 a 5.1)
 
 **Comece por estes documentos** — cobrem todas as versões já registradas, com e sem câmera:
