@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - documentacao/calibracao-validacao-todas-versoes-20261012
+  pull_request:
+    branches:
+      - desenvolvimento/autonomo-sem-camera-3x-20261012
   workflow_dispatch:
 
 jobs:
