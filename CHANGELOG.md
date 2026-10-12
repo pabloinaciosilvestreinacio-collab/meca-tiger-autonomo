@@ -1,5 +1,11 @@
 # Historico de alteracoes
 
+### Integração conjunta FTC SDK — prova real com câmera (12/10/2026)
+- [GitHub Actions run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887): **BUILD SUCCESSFUL in 2m 42s**; tarefas TeamCode:compileDebugJavaWithJavac e TeamCode:assembleDebug. Compilou todas as classes Java presentes, incluindo 4.0, 4.1, 4.2, 5.0, 5.1 e diagnósticos.
+- Scripts Node de visão, PID e encoders também passaram no mesmo run. O [run #38321932005](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321932005) executou auditoria documental **12 versões / 87 verificações** com SUCCESS.
+- Arquivos Java não foram modificados nesta atualização de documentação; montagem da C270, mecanismos e geometria continuam sem testes físicos comprovados.
+- Referência consolidada: RELATORIO_GERAL_VALIDACAO_SOFTWARE.md.
+
 ## 2026-10-12 — Documentacao transversal de TODAS as versoes
 
 - Criado MANUAL_GERAL_CALIBRACAO_TESTES.md: procedimento progressivo e seguro para motor/IMU/encoder, PID, distancia, MI/MS, C270, AprilTags, limites temporais e comparacao justa.
