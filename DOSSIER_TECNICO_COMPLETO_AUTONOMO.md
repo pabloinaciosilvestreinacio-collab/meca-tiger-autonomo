@@ -600,6 +600,22 @@ Nunca ajustar simultaneamente redução, diâmetro, fator de calibração, dire�
 
 **Com câmera:** [4.0](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo4.java) · [4.1](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo41.java) · [4.2](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo42.java) · [5.0](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo50.java) · [5.1](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo51.java).
 
+### Cópias históricas integrais (SHA preservado)
+
+Para reconstruir toda a programação sem depender da classe Java ativa, a pasta de histórico contém também o **conteúdo integral** de cada versão, exatamente como estava ao ser registrada:
+
+| Versões sem câmera | Versões com câmera |
+| --- | --- |
+| [Autônomo 2](historico/Autonomo_2.txt) | [Autônomo 4.0](historico/Autonomo_4_0.txt) |
+| [Autônomo 3](historico/Autonomo_3.txt) | [Autônomo 4.1](historico/Autonomo_4_1.txt) |
+| [Autônomo 3.1](historico/Autonomo_3_1.txt) | [Autônomo 4.2](historico/Autonomo_4_2.txt) |
+| [Autônomo 3.2](historico/Autonomo_3_2.txt) | [Autônomo 5.0](historico/Autonomo_5_0.txt) |
+| [Autônomo 3.3](historico/Autonomo_3_3.txt) | [Autônomo 5.1](historico/Autonomo_5_1.txt) |
+| [Autônomo 3.4](historico/Autonomo_3_4.txt) | — |
+| [Autônomo 3.5](historico/Autonomo_3_5.txt) | — |
+
+A equivalência entre cada backup 3.1–5.1 e sua classe Java atual é verificada pelo [script de auditoria](tests/auditoria_documentacao_geral.mjs).
+
 **Diagnósticos:** [Sinais e IMU](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/DiagnosticoSinais.java) · [C270 e AprilTag](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/DiagnosticoAprilTag.java).
 
 **Documentos de validação:** [3.2](historico/VALIDACAO_Autonomo_3_2.md) · [3.3](historico/VALIDACAO_Autonomo_3_3.md) · [3.4](historico/VALIDACAO_Autonomo_3_4.md) · [3.5](historico/VALIDACAO_Autonomo_3_5.md) · [4.0](historico/VALIDACAO_Autonomo_4_0.md) · [4.1](historico/VALIDACAO_Autonomo_4_1.md) · [4.2–5.1](historico/VALIDACAO_VERSOES_4_2_A_5_1.md) · [Build 3.x](historico/RELATORIO_CI_SEM_CAMERA_3X.md).
