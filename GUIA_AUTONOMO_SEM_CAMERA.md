@@ -15,7 +15,7 @@ Cada arquivo tem backup versionado correspondente em `historico/Autonomo_3_1.txt
 
 ### Interface do autônomo 3.5 (modo de bancada)
 
-No INIT: **B** escolhe teste de giro de 20° e retorno, **X** escolhe 350 mm, **Y** escolhe sequência completa, e **D-pad para cima** escolhe teste exclusivo do lançador MI/MS (pode lançar peças). Após escolher, pressionar **A** para confirmar e **START** para iniciar. Sem confirmação, nenhum movimento é executado. Os modos de giro/avanço não acionam MI/MS.
+No INIT: **B** escolhe teste de giro de 20° e retorno, **X** escolhe 350 mm, **Y** escolhe sequência completa, e **D-pad para cima** escolhe teste exclusivo do lançador MI/MS (pode lançar peças). Após escolher, **soltar A (se estiver pressionado) e apertar novamente** para confirmar e então **START** para iniciar. Sem confirmação, nenhum movimento é executado. Os modos de giro/avanço não acionam MI/MS.
 
 ## Fluxo de execução do autônomo completo
 1. Mapear `MD` (direito), `ME` (esquerdo), `MI` (coleta/alimentação), `MS` (lançador) e `imu` (REV Hub).
