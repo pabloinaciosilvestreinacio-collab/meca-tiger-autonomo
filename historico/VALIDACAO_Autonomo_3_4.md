@@ -39,3 +39,7 @@ A 3.3 tem apenas a estratégia completa. Para ensaiar um subsistema, a equipe te
 
 ## Critério para avançar
 Confirmação de build, motores com polaridade correta, ensaios curtos repetíveis dentro das tolerâncias definidas, 2 m calibrados, launcher verificado, teste completo sem falhas.
+
+
+### Atualização de validação CI — 12/10/2026
+**Compilação FTC real aprovada:** GitHub Actions [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443), `compileDebugJavaWithJavac` e `assembleDebug` com `BUILD SUCCESSFUL in 2m 16s`. Teste Node: 21 assertions e 5.000 cenários; auditoria: 58 verificações. **Não representa teste físico**. Ver `historico/RELATORIO_CI_SEM_CAMERA_3X.md`.
