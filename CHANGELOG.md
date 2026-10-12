@@ -1,5 +1,14 @@
 # Historico de alteracoes
 
+## 2026-10-12 — Documentacao transversal de TODAS as versoes
+
+- Criado MANUAL_GERAL_CALIBRACAO_TESTES.md: procedimento progressivo e seguro para motor/IMU/encoder, PID, distancia, MI/MS, C270, AprilTags, limites temporais e comparacao justa.
+- Criado RELATORIO_GERAL_VALIDACAO_SOFTWARE.md: rastreabilidade de 12 versoes (2, 3, 3.1-3.5, 4.0-4.2, 5.0-5.1), SHA de blobs, alteracoes e status por nivel de evidencia.
+- Criado MODELO_REGISTRO_ENSAIO_AUTONOMO.md: ficha reutilizavel com criterios de aceite, medidas e vinculo com versao/commit.
+- Adicionado workflow de auditoria conjunta FTC (.github/workflows/ftc-auditoria-todas-versoes.yml), para tentar compilar todas as classes, com e sem camera, no projeto FTC oficial.
+- Preservado o status real: FTC 3.1-3.5 compilado no Actions #38319766443; camera so sera considerada compilada mediante job aprovado; testes fisicos nao registrados.
+- Corrigido README para incluir links de todos os novos documentos, sem alterar as classes Java existentes.
+
 ### Integração e compilação FTC SDK real — 12/10/2026
 - GitHub Actions [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443): **2/2 jobs aprovados**. Java/Gradle `compileDebugJavaWithJavac` e `assembleDebug` concluídos com `BUILD SUCCESSFUL`.
 - Node: **21 assertions**, **5.000 simulações**; auditoria estática: **58 verificações** aprovadas.
