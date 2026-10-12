@@ -1,0 +1,61 @@
+name: Auditoria FTC completa - camera e sem camera
+
+on:
+  push:
+    branches:
+      - documentacao/calibracao-validacao-todas-versoes-20261012
+  workflow_dispatch:
+
+jobs:
+  logic:
+    name: Testes matematicos e simulacoes das duas linhas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testes registrados
+        run: |
+          set -e
+          node tests/autonomo32_logic_tests.mjs
+          node tests/autonomo32_travel_model.mjs
+          node tests/autonomo_sem_camera_3x.mjs
+          node tests/auditoria_autonomo_3x.mjs
+          node tests/autonomo41_logic_tests.mjs
+          node tests/autonomo50_synthetic_tests.mjs
+          node tests/autonomo51_cell_tests.mjs
+          node tests/autonomo51_pid_model.mjs
+
+  compile:
+    name: FTC SDK Java - todas as 3.1-5.1
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Localizar Android SDK de runner
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMGR="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -n "$SDKMGR"
+          "$SDKMGR" --version
+          echo "$(dirname "$SDKMGR")" >> "$GITHUB_PATH"
+      - name: Instalar Android SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-30" "platforms;android-35" "build-tools;35.0.0"
+      - name: Clonar FTC SDK oficial
+        run: git clone --depth 1 https://github.com/FIRST-Tech-Challenge/FtcRobotController.git sdk
+      - name: Copiar todas as versoes e diagnosticos
+        run: |
+          mkdir -p sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/*.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
+      - name: Compilar TeamCode com todas as classes
+        working-directory: sdk
+        run: |
+          chmod +x gradlew
+          ./gradlew :TeamCode:assembleDebug --no-daemon --stacktrace
