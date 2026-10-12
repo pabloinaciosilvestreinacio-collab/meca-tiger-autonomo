@@ -1,5 +1,26 @@
 # Historico de alteracoes
 
+## Autonomo 5.1
+- Exige confirmacao com A no INIT para impedir movimentos com a alianca/rota selecionadas por engano.
+- Busca dinamicamente CELL pontuavel da propria alianca; `ftcPose.roll` filtra CELL invertida e `bearing` ajustado escolhe mira.
+- Mantem os quatro nomes de cluster oficiais e a preferencia inicial do D-pad.
+- Validacao: `tests/autonomo51_cell_tests.mjs` (22.656 assertions, 10.000 listas aleatorias no modelo) e `tests/autonomo51_pid_model.mjs` (10.000 + 10.000 giros em modelo PID P/I/D).
+- Acrescentado `DiagnosticoSinais.java` para yaw/encoders sem energizar motores.
+- Falta compilar no SDK FTC real e realizar testes fisicos.
+
+## Autonomo 5.0
+- Selecionar alianca e lado por gamepad no INIT, sem recompilar constantes.
+- Testes: `tests/autonomo50_synthetic_tests.mjs`, 22 assertions e 10.000 cenarios sinteticos.
+- Rota de deslocamento e angulos permanecem comuns aos lados e precisam validacao geometrica.
+
+## Autonomo 4.2
+- Tempos limitados: giro ate 4,5 s, deslocamento ate 9,5 s e correcao final ate 1,5 s.
+- Inclui watchdog de giro sem reducao de erro por 1,2 s, e reserva de tempo durante a visao.
+- Limite teorico combinado das etapas, retorno visual, tiro e margem = 26,90 s < 29 s utilizaveis.
+
+### Relatorio complementar
+`historico/VALIDACAO_VERSOES_4_2_A_5_1.md`. Nenhum merge na main.
+
 ## Autonomo 4.1 — candidato, branch de revisao
 
 - Criado `Autonomo41.java` sem alterar o 3.1 nem o 4.0.
