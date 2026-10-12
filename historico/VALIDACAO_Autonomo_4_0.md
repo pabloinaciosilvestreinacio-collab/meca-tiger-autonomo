@@ -1,46 +1,116 @@
-# Validacao do Autonomo 4.0
+# Validação do Autônomo 4.0
 
 Data: 2026-10-12
 
-## Base
-- Derivado do Autonomo 3.1 sem substituir o arquivo ativo.
-- Mantidos os parametros de estrategia, PID, encoder, rampas e segurancas do 3.1.
-- Adicionada visao AprilTag/Cluster antes do lancamento.
+## Estado da versão
+- Arquivo ativo: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo4.java`
+- SHA do código revisado: `d4a984f7d0f4b680ec1f16ab6d8426b325e2715b`
+- O Autônomo 3.1 não foi alterado.
+- O 4.0 é a linha com câmera/AprilTag Cluster.
 
-## Compatibilidade de visao verificada
-- VisionPortal + AprilTagProcessor.
-- API atual com AprilTagDetection, AprilTagClusterDetection e AprilTagSingleDetection.
-- Cluster tem prioridade; tag individual e fallback defensivo.
-- Webcam configurada como "Webcam 1".
+## Dados oficiais verificados
+- FTC SDK: 12.0 para a temporada 2026-2027.
+- BIOBUZZ possui quatro AprilTag Clusters e nenhuma AprilTag individual de jogo.
+- `AprilTagProcessor.getDetections()` usa `AprilTagDetection` e, no BIOBUZZ, os alvos válidos são `AprilTagClusterDetection`.
+- O `ftcPose.roll` de um cluster com valor absoluto menor que 90 graus indica orientação correta para uso do alvo.
+- A biblioteca da temporada atual é carregada por padrão pelo `AprilTagProcessor`.
+- Logitech C270: resolução 640x480 possui calibração oficial embutida no SDK.
+- HD Hex Motor: 28 counts/rev no eixo do motor.
+- UltraPlanetary: cartucho nominal 4:1 = 3,61:1 real; nominal 5:1 = 5,23:1 real.
+- Redução teórica combinada usada no 4.0: 18,8803:1.
+- Período AUTO BIOBUZZ: 30 segundos.
 
-## Validacoes executadas
-- Compilacao Java estatica com stubs das APIs FTC usadas: OK.
-- Conferencia das assinaturas de visao com o sample oficial RobotAutoDriveToAprilTagTank: OK.
-- Loops de movimento possuem condicoes de STOP/tempo; normalizacao angular e finita por entrada validada.
-- Teste logico de giro em 1000 variacoes de planta: 1000/1000 convergiram dentro de 7 s.
-- Tempo medio da simulacao de giro: ~2.18 s; pior caso observado: ~4.31 s.
-- Alinhamento visual com limite ajustado para 2.5 s: 4999/5000 convergiram em simulacao ampla sem perda de frames.
-- Simulacao de deslocamento com assimetria mecanica, ruido e taxas variadas: comportamento coerente; protecoes de encoder/rumo mantidas.
+## Alterações feitas durante esta revisão
+1. Substituído o fator nominal 20:1 pelas relações reais 3,61 × 5,23.
+2. Adicionado `FATOR_CALIBRACAO_DISTANCIA` para calibração física sem alterar a relação mecânica.
+3. C270 fixada em 640x480 para usar a calibração oficial do SDK.
+4. Adicionado `OFFSET_BEARING_CAMERA_GRAUS` para corrigir montagem física da câmera.
+5. Removido suporte a `AprilTagSingleDetection` na estratégia BIOBUZZ.
+6. Seleção de cluster definida por aliança (RED/BLUE) e lado (SCORING/AUDIENCE).
+7. Rejeição de CELL invertida por `|roll| >= 90°`.
+8. Falhas de câmera operam em modo fail-soft e retornam ao controle por IMU.
+9. Falha de IMU e exceções inesperadas recebem diagnóstico e parada segura.
+10. `normalizarAngulo()` deixou de usar loops e passou a usar módulo com validação de valor finito.
+11. Corrigida a condição final do deslocamento: ao atingir a distância o robô para a translação e, se necessário, corrige o rumo girando no próprio eixo.
+12. Potência mínima de giro e alinhamento visual elevada para 0,10 após teste de sensibilidade a atrito estático.
+13. Adicionada validação de configuração antes do início da rotina.
 
-## Cenários de falha tratados
-- Camera ausente: continua pelo fallback de IMU.
-- Camera inicializada mas sem STREAMING: fallback de IMU.
-- Nenhum alvo: nao move pela camera; mantem rumo do IMU.
-- Alvo muda antes da confirmacao: reinicia confirmacao.
-- Dados NaN/invalidos: deteccao ignorada.
-- Alvo perdido apos movimento: para e retorna ao rumo anterior por IMU.
-- Timeout durante alinhamento: retorna ao rumo por IMU.
-- Pouco tempo restante: pula a etapa de visao para preservar o lancamento.
-- IMU invalida: aborta etapa com diagnostico.
-- Encoder sem progresso: aborta deslocamento com diagnostico.
-- STOP/tempo global: todos os loops relevantes encerram.
+## Simulações lógicas executadas
 
-## Pontos que ainda dependem do robo real
-1. Sinal fisico do giro e do bearing da camera.
-2. Posicao/orientacao real da Logitech C270 no robo.
-3. Escolha do cluster desejado na estrategia de campo.
-4. Ajuste fino de KP_ALINHAMENTO_VISAO, potencia minima/maxima e tolerancia.
-5. Exposicao/ganho da C270 para iluminacao real.
-6. Confirmacao de distancia por encoder e atrito do piso.
+### Giro por IMU/PID
+Modelo:
+- ganho angular aleatório: 140 a 300 graus/s em potência plena;
+- constante de tempo: 0,07 a 0,30 s;
+- atrito estático equivalente: 0,03 a 0,09 de potência;
+- ruído angular adicionado;
+- loop equivalente a 10 ms.
 
-A simulacao reduz risco logico, mas nao substitui validacao fisica.
+Resultados:
+- Giro -50°: 10.000 / 10.000 convergiram dentro de 7 s.
+- Mediana -50°: ~1,91 s.
+- P95 -50°: ~3,67 s.
+- Giro +100°: 10.000 / 10.000 convergiram dentro de 7 s.
+- Mediana +100°: ~2,44 s.
+- P95 +100°: ~4,21 s.
+
+### Deslocamento de 2000 mm
+Modelo:
+- velocidade máxima equivalente variada entre 1200 e 1800 mm/s;
+- assimetria de motor: ±8%;
+- escorregamento independente por lado: 0 a 4%;
+- ruído no rumo;
+- correção por IMU + diferença de encoder.
+
+Problema encontrado antes da correção:
+- 1.232 / 5.000 cenários ultrapassaram o alvo porque o código continuava avançando para tentar satisfazer simultaneamente distância, diferença de encoder e rumo.
+
+Depois da correção:
+- 10.000 / 10.000 cenários concluíram sem ultrapassagem lógica.
+- Mediana: ~4,53 s.
+- P95: ~5,51 s.
+- Pior tempo observado: ~5,99 s.
+
+### Alinhamento por visão
+Modelo:
+- erro inicial de bearing: -15° a +15°;
+- ganho mecânico, inércia e atrito variados;
+- 2% de perda aleatória de frames;
+- timeout visual de 2,5 s.
+
+Resultados:
+- 9.201 / 10.000 alinharam dentro do timeout.
+- 799 / 10.000 chegaram ao timeout de visão.
+- Esses 799 casos não representam falha total do AUTO: o código usa fallback de IMU e preserva o lançamento.
+- Mediana dos alinhamentos bem-sucedidos: ~1,10 s.
+- P95: ~2,14 s.
+
+### Seleção de cluster
+- 28 / 28 combinações lógicas testadas selecionaram somente o cluster definido por aliança/lado.
+- Cluster da aliança oposta é ignorado mesmo quando possui menor |bearing|.
+- Cluster invertido é rejeitado pelo filtro de roll.
+
+## Auditoria estrutural
+- Nenhum uso de `RUN_TO_POSITION`.
+- Controle de movimento continua manual por loop/PID.
+- Todos os loops operacionais possuem `opModeIsActive()`, limite global e/ou timeout.
+- Chaves e parênteses do arquivo balanceados.
+- Câmera é fechada no `finally`.
+- Motores são zerados no `finally`.
+- Leitura inválida de IMU retorna NaN e é rejeitada nas etapas de movimento.
+- Leitura/estado inválido de visão não é permitido comandar movimento.
+
+## Valores ainda dependentes de teste físico
+Estes valores não devem ser considerados “confirmados” por simulação:
+- `DIAMETRO_RODA_MM = 90.0`: o diâmetro efetivo muda com compressão e desgaste.
+- `FATOR_CALIBRACAO_DISTANCIA = 1.0`: deve ser ajustado após medir percurso real.
+- `MIN_POTENCIA_VIRADA = 0.10`: confirmar atrito real.
+- `MIN_POTENCIA_ALINHAMENTO = 0.10`: confirmar atrito real.
+- `OFFSET_BEARING_CAMERA_GRAUS = 0.0`: medir depois de instalar a C270.
+- Orientação física do Control Hub: confirmar LEFT/UP no robô.
+- Sinal real de -50° e +100°: confirmar em teste sobre o piso de competição.
+- Exposição/ganho da C270: otimizar no ambiente real.
+- `POTENCIA_LANCAMENTO = 0.70` e tempos de alimentação: precisam de RPM/ensaio físico.
+- O código pressupõe que os cartuchos UltraPlanetary 4:1 e 5:1 estejam ambos montados no drivetrain.
+
+## Conclusão
+O 4.0 está coerente com o FTC SDK 12.0 e com a API BIOBUZZ atual, e as falhas lógicas encontradas nesta revisão foram corrigidas. As simulações reduzem riscos de sinal, timeout, overshoot e seleção incorreta de alvo, mas não substituem validação física do drivetrain, IMU, C270 e lançador.
