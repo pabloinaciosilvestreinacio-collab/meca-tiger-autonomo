@@ -1,5 +1,14 @@
 # Historico de alteracoes
 
+## Autonomo 3.5 — Bancada (novo, sem camera)
+
+- Adiciona modo `TESTE_LANCADOR` com D-pad para cima no INIT; continua exigindo confirmacao por A, seguido de START.
+- O modo isolado de MI/MS desliga a tracao antes dos tres ciclos de alimentacao/lançamento por tempo, sem mover o robo.
+- `sequencia()` registra tempo e resultado individual por etapa; excecoes identificam a etapa que falhou.
+- Mantem os modos da 3.4, toda a logica de controle da 3.3 e todas as versoes anteriores preservadas.
+- Novo `Autonomo35.java`, `historico/Autonomo_3_5.txt` e `historico/VALIDACAO_Autonomo_3_5.md`.
+- Movimento nao validado fisicamente e contagem de pecas continua apenas temporal.
+
 ## Autonomo 3.4 (novo, sem camera)
 
 - Classe separada `Autonomo34.java` e OpMode `Autonomo 3.4 - Testes`.
