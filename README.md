@@ -2,15 +2,16 @@
 
 ## Linha 3.x — Autonomo SEM camera
 
-**Versao candidata mais recente: Autonomo 3.4 - Testes (na branch de desenvolvimento).**
+**Versao candidata mais recente: Autonomo 3.5 - Bancada (na branch de desenvolvimento).**
 
 - `autonomo.java` = 3.1 de referencia, intacta.
 - `Autonomo32.java` = 3.2, ja existente na main, sem camera.
 - `Autonomo33.java` = 3.3, com limites adicionais de seguranca, diagnostico e orcamento de tempo.
 - `Autonomo34.java` = 3.4, com B = teste de giro (+20 e -20), X = teste de avanco (350 mm), Y = sequencia completa; **A confirma** no INIT.
+- `Autonomo35.java` = 3.5, acrescenta **D-pad para cima = teste somente do lancador MI/MS** e tempo/resultado de cada etapa; os testes anteriores continuam.
 - As quatro versoes continuam separadas, com backups em `historico/`.
 - **Manual operacional:** [GUIA_AUTONOMO_SEM_CAMERA.md](GUIA_AUTONOMO_SEM_CAMERA.md).
-- **Historico de testes:** `historico/VALIDACAO_Autonomo_3_3.md` e `historico/VALIDACAO_Autonomo_3_4.md`.
+- **Historico de testes:** `historico/VALIDACAO_Autonomo_3_3.md`, `...3_4.md` e `...3_5.md`.
 - **Teste reproduzivel:** `node tests/autonomo_sem_camera_3x.mjs` e `node tests/auditoria_autonomo_3x.mjs`.
 - **FTC SDK build:** workflow `.github/workflows/ftc-sem-camera.yml`. Compilacao e hardware **nao confirmados** ate haver evidencia.
 
