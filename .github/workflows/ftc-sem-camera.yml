@@ -41,11 +41,13 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Conferir Android SDK preinstalado
+      - name: Localizar sdkmanager preinstalado
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          command -v sdkmanager
-          sdkmanager --version
+          SDKMGR="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -n "$SDKMGR"
+          "$SDKMGR" --version
+          echo "$(dirname "$SDKMGR")" >> "$GITHUB_PATH"
       - name: Instalar componentes SDK Android
         run: |
           yes | sdkmanager --licenses >/dev/null || true
