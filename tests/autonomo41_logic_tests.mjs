@@ -52,6 +52,8 @@ test('global AUTO shooting budget', () => {
   const remainingAt=t=>Math.max(0,30-1-t);
   assert.ok(remainingAt(26.0)>shoot);
   assert.ok(!(remainingAt(27.0)>shoot));
+  const worstCase = 7.0 + 12.0 + 1.50 + 7.0 + 2.50 + 1.60 + shoot;
+  assert.ok(worstCase > 29, 'Timeout por etapa nao garante concluir em 29s');
 });
 
 function seedRand(seed) {
