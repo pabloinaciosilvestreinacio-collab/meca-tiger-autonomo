@@ -1,5 +1,13 @@
 # Historico de alteracoes
 
+## 12/10/2026 — Dossiê integral de toda a programação FTC (documentação)
+
+- Criado **DOSSIER_TECNICO_COMPLETO_AUTONOMO.md** (~600 linhas): histórico técnico de todas as 12 versões (2–5.1), justificativas de cada melhoria, arquitetura do Java, runOpMode, tarefas, PID manual, encoder, IMU, lançamento, câmera C270, AprilTag Clusters, fallback e orçamentos.
+- Criado **INDICE_COMPLETO_CODIGOS_AUTONOMO.md**: links dos 12 códigos completos, backups, hashes de blob, métodos-chave, diagnósticos e instruções de comparação.
+- Dossiê inclui manual progressivo de calibração/ensaios e integra links aos relatórios e fichas existentes, sem duplicar milhares de linhas dos fontes Java.
+- Status de evidência preservado: **build FTC conjunto aprovado no Actions #38321732887; nenhum teste físico concluído**.
+- Arquivos Java originais e históricos não são alterados nesta entrega; mudanças documentais mantidas na branch PR #4 e sem merge em main.
+
 ### Integração conjunta FTC SDK — prova real com câmera (12/10/2026)
 - [GitHub Actions run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887): **BUILD SUCCESSFUL in 2m 42s**; tarefas TeamCode:compileDebugJavaWithJavac e TeamCode:assembleDebug. Compilou todas as classes Java presentes, incluindo 4.0, 4.1, 4.2, 5.0, 5.1 e diagnósticos.
 - Scripts Node de visão, PID e encoders também passaram no mesmo run. O [run #38321932005](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321932005) executou auditoria documental **12 versões / 87 verificações** com SUCCESS.
