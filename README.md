@@ -1,5 +1,18 @@
 # Meca Tiger - Autonomo FTC
 
+## Documentação geral — todas as versões (2 a 5.1)
+
+**Comece por estes documentos** — cobrem todas as versões já registradas, com e sem câmera:
+
+- **[Manual geral de calibração e testes](MANUAL_GERAL_CALIBRACAO_TESTES.md)**: inspeção de hardware, motor/encoder/IMU, ajuste de PID, odometria, lançador MI/MS, câmera C270, AprilTags, ensaios graduais e comparação entre versões.
+- **[Relatório geral de validação de software](RELATORIO_GERAL_VALIDACAO_SOFTWARE.md)**: matriz das 12 versões, mudanças, SHA de cada código, scripts, simulações, evidências de compilação FTC e pendências físicas.
+- **[Ficha preenchível de ensaio](MODELO_REGISTRO_ENSAIO_AUTONOMO.md)**: registrar medições reais de cada teste, falhas, condição da bateria, calibração e decisão de aceite.
+- **[Guia específico sem câmera](GUIA_AUTONOMO_SEM_CAMERA.md)**: detalhes operacionais adicionais das versões 3.1–3.5.
+- **[Relatórios individuais e históricos](historico/)**: cópias exatas por versão e evidências registradas.
+
+**Status de evidência:** a compilação FTC das versões 3.1–3.5 foi confirmada no [GitHub Actions #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443). Para as versões com câmera, consultar o relatório geral e os logs do workflow de auditoria; não inferir compilação sem log. Testes físicos ainda precisam ser registrados.
+
+
 ## Linha 3.x — Autonomo SEM camera
 
 **Versao candidata mais recente: Autonomo 3.5 - Bancada (na branch de desenvolvimento).**
@@ -9,7 +22,7 @@
 - `Autonomo33.java` = 3.3, com limites adicionais de seguranca, diagnostico e orcamento de tempo.
 - `Autonomo34.java` = 3.4, com B = teste de giro (+20 e -20), X = teste de avanco (350 mm), Y = sequencia completa; **A confirma** no INIT.
 - `Autonomo35.java` = 3.5, acrescenta **D-pad para cima = teste somente do lancador MI/MS** e tempo/resultado de cada etapa; os testes anteriores continuam.
-- As quatro versoes continuam separadas, com backups em `historico/`.
+- Todas as versoes permanecem separadas, com backups em `historico/`.
 - **Manual operacional:** [GUIA_AUTONOMO_SEM_CAMERA.md](GUIA_AUTONOMO_SEM_CAMERA.md).
 - **Historico de testes:** `historico/VALIDACAO_Autonomo_3_3.md`, `...3_4.md` e `...3_5.md`.
 - **Teste reproduzivel:** `node tests/autonomo_sem_camera_3x.mjs` e `node tests/auditoria_autonomo_3x.mjs`.
