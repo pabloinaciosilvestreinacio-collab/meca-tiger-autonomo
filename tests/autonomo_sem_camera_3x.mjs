@@ -101,10 +101,27 @@ function runSemCameraRegression(){
  expect((modes.stalled_right["drive:encoder_divergence"]??0)>950,"stalled right detection");
  expect((modes.frozen_encoder["drive:encoder_divergence"]??0)>950,"frozen encoder detection");
  expect((modes.bad_imu["firstTurn:sensor_invalid"]??0)>950,"sensor invalid detection");
- let selection={mode:"GIRO_CURTO",confirmed:false};
- function choose(next){if(selection.mode!==next)selection.confirmed=false;selection.mode=next;}
- choose("COMPLETO");expect(!selection.confirmed,"mode change removes confirmation");
- selection.confirmed=true;choose("DESLOCAMENTO_CURTO");expect(!selection.confirmed,"new mode requires explicit A");
+ let selection={mode:"GIRO_CURTO",confirmed:false,buttonAPrevious:false};
+ function press(mode,a){
+   const changed=selection.mode!==mode;
+   if(changed)selection.confirmed=false;
+   if(!changed&&a&&!selection.buttonAPrevious)selection.confirmed=true;
+   selection.buttonAPrevious=a;
+   selection.mode=mode;
+ }
+ press("COMPLETO",true);
+ expect(!selection.confirmed,"simultaneous mode switch + A must not confirm");
+ press("COMPLETO",true);
+ expect(!selection.confirmed,"holding A must not confirm after switch");
+ press("COMPLETO",false);
+ expect(!selection.confirmed,"release A must not confirm");
+ press("COMPLETO",true);
+ expect(selection.confirmed,"fresh A edge confirms stable mode");
+ press("TESTE_LANCADOR",true);
+ expect(!selection.confirmed,"switching to launcher disarms confirmation");
+ press("TESTE_LANCADOR",false);
+ press("TESTE_LANCADOR",true);
+ expect(selection.confirmed,"launcher requires its own A edge");
  const result={assertions,totalSimulated:total,physicalValidation:false,units:"millimeters/degrees/seconds",ticksMm,nominalMaxStageBudget:budget,distribution:modes,modelDescription:"simplified sampled differential drive + discrete PID; signs, camera absent; not FTC SDK"};
  return result;
 }
