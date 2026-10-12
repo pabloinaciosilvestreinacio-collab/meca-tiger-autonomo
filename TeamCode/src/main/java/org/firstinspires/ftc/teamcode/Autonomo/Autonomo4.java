@@ -13,7 +13,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import java.util.List;
 
@@ -112,10 +111,9 @@ public class Autonomo4 extends LinearOpMode {
             CLUSTER_BLUE_AUDIENCE
     };
 
-    // null = aceitar qualquer cluster BIOBUZZ que esteja em posicao pontuavel.
-    // Para travar um alvo, use uma das quatro constantes acima.
-    private static final String CLUSTER_DESEJADO = null;
-    private static final int TAG_INDIVIDUAL_DESEJADA = -1;
+    // Estrategia do AUTO. Altere estas duas variaveis conforme o lado de partida.
+    private static final Alianca ALIANCA_ESTRATEGIA = Alianca.RED;
+    private static final LadoCampo LADO_ESTRATEGIA = LadoCampo.SCORING;
 
     private static final double KP_ALINHAMENTO_VISAO = 0.010;
     private static final double MIN_POTENCIA_ALINHAMENTO = 0.07;
@@ -145,6 +143,7 @@ public class Autonomo4 extends LinearOpMode {
             telemetry.addLine("Meca Tiger - Autonomo 4.0");
             telemetry.addData("IMU inicializado", imuInicializado);
             telemetry.addData("Visao", estadoVisao);
+            telemetry.addData("Cluster alvo", clusterAlvoDaEstrategia());
             telemetry.addData("Ticks/mm", "%.4f", TICKS_POR_MM);
             telemetry.addLine("-50, coletar 2000 mm, +100, alinhar por visao, lancar 3");
             telemetry.update();
@@ -847,92 +846,70 @@ public class Autonomo4 extends LinearOpMode {
             return null;
         }
 
+        String clusterDesejado = clusterAlvoDaEstrategia();
         AlvoVisao melhorCluster = null;
-        AlvoVisao melhorTag = null;
 
         for (AprilTagDetection detection : deteccoes) {
-            if (detection instanceof AprilTagClusterDetection) {
-                AprilTagClusterDetection cluster =
-                        (AprilTagClusterDetection) detection;
+            if (!(detection instanceof AprilTagClusterDetection)) {
+                continue;
+            }
 
-                if (cluster.metadata == null || cluster.ftcPose == null) {
-                    continue;
-                }
+            AprilTagClusterDetection cluster =
+                    (AprilTagClusterDetection) detection;
 
-                String nome = cluster.metadata.shortName;
+            if (cluster.metadata == null || cluster.ftcPose == null) {
+                continue;
+            }
 
-                if (nome == null || nome.isEmpty()) {
-                    nome = cluster.metadata.name;
-                }
+            String nome = cluster.metadata.shortName;
 
-                if (!ehClusterBiobuzz(nome)) {
-                    continue;
-                }
+            if (nome == null || nome.isEmpty()) {
+                nome = cluster.metadata.name;
+            }
 
-                if (CLUSTER_DESEJADO != null
-                        && !CLUSTER_DESEJADO.equalsIgnoreCase(nome)) {
-                    continue;
-                }
+            if (!ehClusterBiobuzz(nome)
+                    || !clusterDesejado.equalsIgnoreCase(nome)) {
+                continue;
+            }
 
-                // No BIOBUZZ, uma CELL pontuavel fica aproximadamente
-                // com o cluster "de pe" para a camera: |roll| < 90 graus.
-                if (!Double.isFinite(cluster.ftcPose.roll)
-                        || Math.abs(cluster.ftcPose.roll) >= 90.0) {
-                    continue;
-                }
+            // BIOBUZZ: CELL pontuavel com camera voltada no sentido
+            // do lancamento deve apresentar |roll| < 90 graus.
+            if (!Double.isFinite(cluster.ftcPose.roll)
+                    || Math.abs(cluster.ftcPose.roll) >= 90.0) {
+                continue;
+            }
 
-                AlvoVisao candidato = new AlvoVisao(
-                        "cluster:" + nome,
-                        nome,
-                        "Cluster",
-                        cluster.ftcPose.range,
-                        cluster.ftcPose.bearing,
-                        cluster.ftcPose.yaw,
-                        cluster.ftcPose.roll
-                );
+            AlvoVisao candidato = new AlvoVisao(
+                    "cluster:" + nome,
+                    nome,
+                    "Cluster",
+                    cluster.ftcPose.range,
+                    cluster.ftcPose.bearing,
+                    cluster.ftcPose.yaw,
+                    cluster.ftcPose.roll
+            );
 
-                if (dadosVisaoValidos(candidato)
-                        && (melhorCluster == null
-                        || Math.abs(candidato.bearing)
-                        < Math.abs(melhorCluster.bearing))) {
-                    melhorCluster = candidato;
-                }
-
-            } else if (detection instanceof AprilTagSingleDetection) {
-                AprilTagSingleDetection tag =
-                        (AprilTagSingleDetection) detection;
-
-                if (tag.metadata == null || tag.ftcPose == null) {
-                    continue;
-                }
-
-                if (TAG_INDIVIDUAL_DESEJADA >= 0
-                        && tag.id != TAG_INDIVIDUAL_DESEJADA) {
-                    continue;
-                }
-
-                String nome = tag.metadata.name;
-
-                AlvoVisao candidato = new AlvoVisao(
-                        "tag:" + tag.id,
-                        nome != null ? nome : ("ID " + tag.id),
-                        "Tag individual",
-                        tag.ftcPose.range,
-                        tag.ftcPose.bearing,
-                        tag.ftcPose.yaw,
-                        tag.ftcPose.roll
-                );
-
-                if (dadosVisaoValidos(candidato)
-                        && (melhorTag == null
-                        || Math.abs(candidato.bearing)
-                        < Math.abs(melhorTag.bearing))) {
-                    melhorTag = candidato;
-                }
+            if (dadosVisaoValidos(candidato)
+                    && (melhorCluster == null
+                    || Math.abs(candidato.bearing)
+                    < Math.abs(melhorCluster.bearing))) {
+                melhorCluster = candidato;
             }
         }
 
-        return melhorCluster != null ? melhorCluster : melhorTag;
+        return melhorCluster;
+    }
+
+    private String clusterAlvoDaEstrategia() {
+        if (ALIANCA_ESTRATEGIA == Alianca.RED) {
+            return LADO_ESTRATEGIA == LadoCampo.SCORING
+                    ? CLUSTER_RED_SCORING
+                    : CLUSTER_RED_AUDIENCE;
+        }
+
+        return LADO_ESTRATEGIA == LadoCampo.SCORING
+                ? CLUSTER_BLUE_SCORING
+                : CLUSTER_BLUE_AUDIENCE;
     }
 
     private boolean ehClusterBiobuzz(String nome) {
@@ -1138,6 +1115,16 @@ public class Autonomo4 extends LinearOpMode {
                 visionPortal = null;
             }
         }
+    }
+
+    private enum Alianca {
+        RED,
+        BLUE
+    }
+
+    private enum LadoCampo {
+        SCORING,
+        AUDIENCE
     }
 
     private interface Acao {
