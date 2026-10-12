@@ -1,5 +1,11 @@
 # Historico de alteracoes
 
+### Integração e compilação FTC SDK real — 12/10/2026
+- GitHub Actions [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443): **2/2 jobs aprovados**. Java/Gradle `compileDebugJavaWithJavac` e `assembleDebug` concluídos com `BUILD SUCCESSFUL`.
+- Node: **21 assertions**, **5.000 simulações**; auditoria estática: **58 verificações** aprovadas.
+- Código Java efetivamente compilado possui os mesmos hashes das versões 3.1–3.5 atuais. Sem movimento real do robô, pendente validação física.
+- Detalhes: `historico/RELATORIO_CI_SEM_CAMERA_3X.md`.
+
 ## Autonomo 3.5 — Bancada (novo, sem camera)
 
 - Adiciona modo `TESTE_LANCADOR` com D-pad para cima no INIT; continua exigindo confirmacao por A, seguido de START.
