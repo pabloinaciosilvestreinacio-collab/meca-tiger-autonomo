@@ -1,5 +1,25 @@
 # Meca Tiger - Autonomo FTC
 
+## Candidato mais novo: Autonomo 5.1 (branch de revisao)
+
+- Arquivo: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo51.java`
+- Mantem: giro -50 graus, coleta a 2000 mm, giro +100 graus, alinhamento por cluster da propria alianca e tentativa de lancar 3 elementos.
+- INIT: D-pad esquerda RED / direita BLUE; cima SCORING / baixo AUDIENCE; A confirma estrategia. Sem confirmacao o AUTO nao move motores.
+- Detecta automaticamente a CELL pontuavel da propria alianca pelo `roll`, mesmo que mude de orientacao.
+- Limites somados + margem: 26,90 s teoricos, dentro de 29 s utilizaveis.
+- Veja `historico/VALIDACAO_VERSOES_4_2_A_5_1.md`. O CI foi configurado mas a compilacao real ainda nao foi confirmada; este codigo **NAO** foi testado fisicamente.
+- Scripts: `node tests/autonomo50_synthetic_tests.mjs`, `node tests/autonomo51_cell_tests.mjs`, `node tests/autonomo51_pid_model.mjs`.
+- Diagnosticos de campo (NAO acionam motores): `DiagnosticoAprilTag.java` e `DiagnosticoSinais.java`.
+
+### Histórico completo
+- 3.1 estavel: `Autonomo/autonomo.java` (arquivo 3.1 em main; nao alterar)
+- 4.0: `Autonomo4.java`
+- 4.1: `Autonomo41.java`
+- 4.2: `Autonomo42.java`
+- 5.0: `Autonomo50.java`
+- 5.1: `Autonomo51.java`
+- Cada versao evolutiva esta preservada em `historico/Autonomo_X_Y.txt` na branch.
+
 Repositorio do codigo autonomo da equipe Meca Tiger FTC #32578.
 
 ## Versoes e status
