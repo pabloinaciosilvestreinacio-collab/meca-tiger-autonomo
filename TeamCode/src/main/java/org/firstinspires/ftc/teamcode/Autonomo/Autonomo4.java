@@ -95,9 +95,8 @@ public class Autonomo4 extends LinearOpMode {
     private static final double MIN_POTENCIA_RODA = 0.08;
 
     private static final int TOLERANCIA_DISTANCIA_TICKS = 25;
-    private static final int TOLERANCIA_DIFERENCA_TICKS = 65;
-    private static final int LIMITE_ULTRAPASSAGEM_TICKS = 95;
     private static final double TOLERANCIA_RUMO_DESLOCAMENTO = 5.0;
+    private static final double TEMPO_CORRECAO_FINAL_RUMO = 1.50;
 
     private static final int PROGRESSO_MINIMO_TICKS = 6;
     private static final double TEMPO_SEM_PROGRESSO = 1.20;
@@ -537,19 +536,29 @@ public class Autonomo4 extends LinearOpMode {
 
             double erroRumo = normalizarAngulo(rumoAlvo - rumoAtual);
 
-            if (mediaTicks >= alvoTicks - TOLERANCIA_DISTANCIA_TICKS
-                    && Math.abs(diferencaTicks)
-                    <= TOLERANCIA_DIFERENCA_TICKS
-                    && Math.abs(erroRumo)
-                    <= TOLERANCIA_RUMO_DESLOCAMENTO) {
+            if (mediaTicks >= alvoTicks - TOLERANCIA_DISTANCIA_TICKS) {
                 pararTracao();
-                return true;
-            }
 
-            if (mediaTicks > alvoTicks + LIMITE_ULTRAPASSAGEM_TICKS) {
-                motivoFalha = "Passou do alvo sem equilibrar encoders/rumo";
-                pararTracao();
-                return false;
+                if (Math.abs(erroRumo)
+                        <= TOLERANCIA_RUMO_DESLOCAMENTO) {
+                    return true;
+                }
+
+                // A distancia do centro do robo e dada pela media das rodas.
+                // Depois de atingir o alvo linear, nao continue avancando apenas
+                // para igualar encoders: corrija o rumo girando no proprio eixo.
+                boolean rumoCorrigido = virarParaRumo(
+                        rumoAlvo,
+                        TEMPO_CORRECAO_FINAL_RUMO
+                );
+
+                if (!rumoCorrigido
+                        && "Tempo limite da virada".equals(motivoFalha)) {
+                    motivoFalha =
+                            "Distancia atingida; correcao final de rumo excedeu o tempo";
+                }
+
+                return rumoCorrigido;
             }
 
             if (ticksMD >= ultimoProgressoMD + PROGRESSO_MINIMO_TICKS) {
@@ -642,6 +651,7 @@ public class Autonomo4 extends LinearOpMode {
                 telemetry.addData("Alvo / restante", "%d / %.1f mm",
                         alvoTicks, restantes / TICKS_POR_MM);
                 telemetry.addData("Erro rumo", "%.2f", erroRumo);
+                telemetry.addData("Diferenca ticks", "%d", diferencaTicks);
                 telemetry.addData("Correcao", "%.3f", correcao);
                 telemetry.addData("Potencia MD / ME", "%.2f / %.2f",
                         potenciaMD, potenciaME);
