@@ -33,6 +33,7 @@ public class Autonomo35 extends LinearOpMode {
 
     private ModoExecucao modoExecucao = ModoExecucao.GIRO_CURTO;
     private boolean modoConfirmado;
+    private boolean botaoAAnterior;
 
     // Parametros da estrategia: altere estes valores durante os testes de campo.
     private static final double ANGULO_COLETA = -50.0;
@@ -137,13 +138,15 @@ public class Autonomo35 extends LinearOpMode {
                     modoExecucao = ModoExecucao.TESTE_LANCADOR;
                 }
 
-                if (anterior != modoExecucao) {
+                boolean mudouModo = anterior != modoExecucao;
+                if (mudouModo) {
                     modoConfirmado = false;
                 }
 
-                if (gamepad1.a) {
+                if (!mudouModo && gamepad1.a && !botaoAAnterior) {
                     modoConfirmado = true;
                 }
+                botaoAAnterior = gamepad1.a;
 
                 telemetry.addLine("Meca Tiger - Autonomo 3.5 sem camera");
                 telemetry.addLine("B=Giro +/-20 | X=Avanco 350mm | Y=Completo");
