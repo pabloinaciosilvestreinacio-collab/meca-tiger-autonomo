@@ -32,3 +32,7 @@ O robô não possui no código feedback de velocidade de MS nem contagem de peç
 
 ## Reversão
 A 3.4 continua no próprio arquivo `Autonomo34.java`, e a 3.3 completa em `Autonomo33.java`. Basta selecionar outra OpMode. Não sobrescrever versões antigas ou `main` sem aprovação específica.
+
+
+### Atualização de validação CI — 12/10/2026
+**Compilação FTC real aprovada:** GitHub Actions [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443), `compileDebugJavaWithJavac` e `assembleDebug` com `BUILD SUCCESSFUL in 2m 16s`. Teste Node: 21 assertions e 5.000 cenários; auditoria: 58 verificações. **Não representa teste físico**. Ver `historico/RELATORIO_CI_SEM_CAMERA_3X.md`.
