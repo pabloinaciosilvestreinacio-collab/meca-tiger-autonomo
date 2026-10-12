@@ -1,0 +1,607 @@
+package org.firstinspires.ftc.teamcode.Autonomo;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+@Autonomous(name = "Autonomo", group = "Teste")
+public class autonomo extends LinearOpMode {
+    private DcMotor MD;
+    private DcMotor ME;
+    private DcMotor MI;
+    private DcMotor MS;
+    private IMU imu;
+    private final ElapsedTime cronometroAuto = new ElapsedTime();
+    private String motivoFalha = "";
+    private static final double TICKS_POR_MM =
+            (28.0 * 20.0) / (Math.PI * 90.0);
+    private static final double KP_VIRADA = 0.012;
+    private static final double KI_VIRADA = 0.00012;
+    private static final double KD_VIRADA = 0.0015;
+    private static final double KP_RUMO = 0.018;
+    private static final double KI_RUMO = 0.00015;
+    private static final double KD_RUMO = 0.0012;
+    private static final double MIN_POTENCIA_VIRADA = 0.08;
+    private static final double MAX_POTENCIA_VIRADA = 0.50;
+    private static final double TOLERANCIA_VIRADA = 2.0;
+    private static final double TOLERANCIA_VELOCIDADE_YAW = 5.0;
+    private static final double TEMPO_ESTAVEL_VIRADA = 0.18;
+    private static final double KP_ENCODER = 0.0002;
+    private static final double MAX_CORRECAO_ENCODER = 0.05;
+    private static final double MAX_CORRECAO_TOTAL = 0.25;
+    private static final double MIN_POTENCIA_DESLOCAMENTO = 0.16;
+    private static final double MIN_POTENCIA_RODA = 0.08;
+    private static final double FRACAO_DESACELERACAO = 0.20;
+    private static final double TEMPO_ACELERACAO_CHASSI = 0.40;
+    private static final int TOLERANCIA_DISTANCIA_TICKS = 25;
+    private static final int LIMITE_ENCODER_NEGATIVO = -10;
+    private static final double TOLERANCIA_RUMO_DESLOCAMENTO = 5.0;
+    private static final double TEMPO_SEM_PROGRESSO = 1.20;
+    private static final double POTENCIA_INTAKE = 0.60;
+    private static final double POTENCIA_LANCAMENTO = 0.70;
+    private static final double TEMPO_ACELERACAO_LANCADOR = 0.80;
+    private static final double TEMPO_ALIMENTACAO_POR_PECA = 0.45;
+    private static final double TEMPO_ENTRE_PECAS = 0.15;
+    private static final double TEMPO_LIMITE_VIRADA = 6.0;
+    private static final double TEMPO_LIMITE_DISTANCIA = 10.0;
+    private static final double TEMPO_MAXIMO_AUTO = 30.0;
+    private static final double RESERVA_SEGURANCA = 1.0;
+    @Override
+    public void runOpMode() {
+        try {
+            MD = hardwareMap.get(DcMotor.class, "MD");
+            ME = hardwareMap.get(DcMotor.class, "ME");
+            MI = hardwareMap.get(DcMotor.class, "MI");
+            MS = hardwareMap.get(DcMotor.class, "MS");
+            imu = hardwareMap.get(IMU.class, "imu");
+            MD.setDirection(DcMotor.Direction.REVERSE);
+            ME.setDirection(DcMotor.Direction.FORWARD);
+            MD.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            ME.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            parar();
+            pararMecanismos();
+            MI.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            MS.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            reiniciarEncoders();
+            RevHubOrientationOnRobot orientacao =
+                    new RevHubOrientationOnRobot(
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.UP
+                    );
+            boolean imuInicializado = imu.initialize(
+                    new IMU.Parameters(orientacao)
+            );
+            telemetry.addLine("Meca Tiger - autonomo integrado");
+            telemetry.addData("IMU inicializado", imuInicializado);
+            telemetry.addData("Ticks/mm", "%.4f", TICKS_POR_MM);
+            telemetry.addLine(
+                    "Virar -50, coletar 2000 mm, virar +100, alimentar 3"
+            );
+            telemetry.update();
+            waitForStart();
+            if (isStopRequested()) {
+                return;
+            }
+            cronometroAuto.reset();
+            if (!imuInicializado) {
+                motivoFalha = "IMU nao inicializado";
+                mostrarFalha("Inicializacao");
+                return;
+            }
+            imu.resetYaw();
+            if (!virarRelativo(-50.0)) {
+                mostrarFalha("Primeira virada");
+                return;
+            }
+            double rumoDoDeslocamento = lerYaw();
+            if (!Double.isFinite(rumoDoDeslocamento)) {
+                motivoFalha = "Leitura IMU invalida";
+                mostrarFalha("Preparacao do deslocamento");
+                return;
+            }
+            if (!coletarDuranteDeslocamento(
+                    2000.0,
+                    rumoDoDeslocamento,
+                    0.35)) {
+                mostrarFalha("Coleta e deslocamento");
+                return;
+            }
+            if (!virarRelativo(100.0)) {
+                mostrarFalha("Segunda virada");
+                return;
+            }
+            if (!lancarPecasPorTempo(3)) {
+                mostrarFalha("Lancamento");
+                return;
+            }
+            parar();
+            pararMecanismos();
+            telemetry.addLine("Sequencia concluida");
+            telemetry.addData(
+                    "Tempo total",
+                    "%.2f s",
+                    cronometroAuto.seconds()
+            );
+            telemetry.addData("Yaw final", "%.2f", lerYaw());
+            telemetry.update();
+        } finally {
+            parar();
+            pararMecanismos();
+        }
+    }
+    private boolean virarRelativo(double graus) {
+        double rumoInicial = lerYaw();
+        if (!Double.isFinite(graus)
+                || !Double.isFinite(rumoInicial)
+                || Math.abs(graus) > 180.0) {
+            motivoFalha = "Parametros ou IMU invalidos na virada";
+            parar();
+            return false;
+        }
+        double rumoAlvo = normalizarAngulo(rumoInicial + graus);
+        ControladorPID pid = new ControladorPID(rumoInicial);
+        ElapsedTime timer = new ElapsedTime();
+        ElapsedTime telemetriaTimer = new ElapsedTime();
+        double inicioEstabilidade = -1.0;
+        while (tempoDisponivel()
+                && timer.seconds() < TEMPO_LIMITE_VIRADA) {
+            double rumoAtual = lerYaw();
+            if (!Double.isFinite(rumoAtual)) {
+                motivoFalha = "IMU invalido durante virada";
+                parar();
+                return false;
+            }
+            double erro = normalizarAngulo(rumoAlvo - rumoAtual);
+            double comando = pid.calcular(
+                    erro,
+                    rumoAtual,
+                    KP_VIRADA,
+                    KI_VIRADA,
+                    KD_VIRADA,
+                    MAX_POTENCIA_VIRADA,
+                    0.0
+            );
+            if (Math.abs(erro) <= TOLERANCIA_VIRADA) {
+                pid.zerarIntegral();
+                comando = limitar(
+                        -KD_VIRADA * pid.velocidadeYaw,
+                        -MAX_POTENCIA_VIRADA,
+                        MAX_POTENCIA_VIRADA
+                );
+                if (Math.abs(pid.velocidadeYaw)
+                        <= TOLERANCIA_VELOCIDADE_YAW) {
+                    if (inicioEstabilidade < 0.0) {
+                        inicioEstabilidade = timer.seconds();
+                    }
+                    if (timer.seconds() - inicioEstabilidade
+                            >= TEMPO_ESTAVEL_VIRADA) {
+                        parar();
+                        return true;
+                    }
+                } else {
+                    inicioEstabilidade = -1.0;
+                }
+            } else {
+                inicioEstabilidade = -1.0;
+                if (Math.abs(comando) < MIN_POTENCIA_VIRADA
+                        && comando * erro >= 0.0) {
+                    comando = Math.copySign(
+                            MIN_POTENCIA_VIRADA,
+                            erro
+                    );
+                }
+            }
+            MD.setPower(comando);
+            ME.setPower(-comando);
+            if (telemetriaTimer.seconds() >= 0.10) {
+                telemetry.addData("Movimento", "VIRANDO");
+                telemetry.addData("Yaw atual", "%.2f", rumoAtual);
+                telemetry.addData("Yaw alvo", "%.2f", rumoAlvo);
+                telemetry.addData("Erro", "%.2f", erro);
+                telemetry.addData(
+                        "Yaw graus/s",
+                        "%.2f",
+                        pid.velocidadeYaw
+                );
+                telemetry.addData(
+                        "Parcela integral",
+                        "%.3f",
+                        KI_VIRADA * pid.integral
+                );
+                telemetry.addData("Potencia", "%.3f", comando);
+                telemetry.update();
+                telemetriaTimer.reset();
+            }
+            sleep(10);
+        }
+        parar();
+        motivoFalha = tempoDisponivel()
+                ? "Tempo limite da virada"
+                : "Tempo AUTO esgotado ou STOP";
+        return false;
+    }
+    private boolean andarComRumo(
+            double distanciaMm,
+            double rumoAlvo,
+            double velocidade) {
+        if (!Double.isFinite(distanciaMm)
+                || !Double.isFinite(rumoAlvo)
+                || !Double.isFinite(velocidade)
+                || distanciaMm <= 0.0
+                || velocidade < MIN_POTENCIA_DESLOCAMENTO
+                || velocidade > 1.0
+                || distanciaMm * TICKS_POR_MM > Integer.MAX_VALUE) {
+            motivoFalha = "Parametros de deslocamento invalidos";
+            parar();
+            return false;
+        }
+        double yawInicial = lerYaw();
+        if (!Double.isFinite(yawInicial)) {
+            motivoFalha = "IMU invalido antes do deslocamento";
+            parar();
+            return false;
+        }
+        int alvoTicks = Math.max(
+                1,
+                (int) Math.round(distanciaMm * TICKS_POR_MM)
+        );
+        reiniciarEncoders();
+        ControladorPID pid = new ControladorPID(yawInicial);
+        ElapsedTime timer = new ElapsedTime();
+        ElapsedTime progressoMD = new ElapsedTime();
+        ElapsedTime progressoME = new ElapsedTime();
+        ElapsedTime telemetriaTimer = new ElapsedTime();
+        int ultimaPosicaoMD = 0;
+        int ultimaPosicaoME = 0;
+        while (tempoDisponivel()
+                && timer.seconds() < TEMPO_LIMITE_DISTANCIA) {
+            int ticksMD = MD.getCurrentPosition();
+            int ticksME = ME.getCurrentPosition();
+            if (ticksMD < LIMITE_ENCODER_NEGATIVO
+                    || ticksME < LIMITE_ENCODER_NEGATIVO) {
+                motivoFalha = "Encoder negativo: verificar direcoes";
+                parar();
+                return false;
+            }
+            double mediaTicks =
+                    ((double) ticksMD + ticksME) / 2.0;
+            double restantes = alvoTicks - mediaTicks;
+            double rumoAtual = lerYaw();
+            if (!Double.isFinite(rumoAtual)) {
+                motivoFalha = "IMU invalido durante deslocamento";
+                parar();
+                return false;
+            }
+            double erroRumo = normalizarAngulo(
+                    rumoAlvo - rumoAtual
+            );
+            if (mediaTicks >= alvoTicks - TOLERANCIA_DISTANCIA_TICKS) {
+                parar();
+                if (Math.abs(erroRumo)
+                        > TOLERANCIA_RUMO_DESLOCAMENTO) {
+                    motivoFalha = "Distancia atingida com erro de rumo";
+                    return false;
+                }
+                return true;
+            }
+            if (ticksMD >= ultimaPosicaoMD + 6) {
+                ultimaPosicaoMD = ticksMD;
+                progressoMD.reset();
+            }
+            if (ticksME >= ultimaPosicaoME + 6) {
+                ultimaPosicaoME = ticksME;
+                progressoME.reset();
+            }
+            if (progressoMD.seconds() > TEMPO_SEM_PROGRESSO
+                    || progressoME.seconds() > TEMPO_SEM_PROGRESSO) {
+                motivoFalha = "Um dos encoders ficou sem progresso";
+                parar();
+                return false;
+            }
+            double faixaDesaceleracao = Math.max(
+                    1.0,
+                    alvoTicks * FRACAO_DESACELERACAO
+            );
+            double fatorDesaceleracao = limitar(
+                    restantes / faixaDesaceleracao,
+                    0.0,
+                    1.0
+            );
+            double potenciaBase = Math.max(
+                    MIN_POTENCIA_DESLOCAMENTO,
+                    velocidade * fatorDesaceleracao
+            );
+            double fatorAceleracao = limitar(
+                    timer.seconds() / TEMPO_ACELERACAO_CHASSI,
+                    0.0,
+                    1.0
+            );
+            double limiteAceleracao =
+                    MIN_POTENCIA_DESLOCAMENTO
+                    + (velocidade - MIN_POTENCIA_DESLOCAMENTO)
+                    * fatorAceleracao;
+            potenciaBase = Math.min(
+                    potenciaBase,
+                    limiteAceleracao
+            );
+            double limiteCorrecao = Math.min(
+                    MAX_CORRECAO_TOTAL,
+                    Math.max(
+                            0.0,
+                            potenciaBase - MIN_POTENCIA_RODA
+                    )
+            );
+            double diferencaTicks =
+                    (double) ticksMD - ticksME;
+            double correcaoEncoder = limitar(
+                    KP_ENCODER * diferencaTicks,
+                    -MAX_CORRECAO_ENCODER,
+                    MAX_CORRECAO_ENCODER
+            );
+            double correcao = pid.calcular(
+                    erroRumo,
+                    rumoAtual,
+                    KP_RUMO,
+                    KI_RUMO,
+                    KD_RUMO,
+                    limiteCorrecao,
+                    -correcaoEncoder
+            );
+            double potenciaMD = limitar(
+                    potenciaBase + correcao,
+                    0.0,
+                    1.0
+            );
+            double potenciaME = limitar(
+                    potenciaBase - correcao,
+                    0.0,
+                    1.0
+            );
+            MD.setPower(potenciaMD);
+            ME.setPower(potenciaME);
+            if (telemetriaTimer.seconds() >= 0.10) {
+                telemetry.addData("Movimento", "ANDANDO");
+                telemetry.addData(
+                        "Ticks MD / ME",
+                        "%d / %d",
+                        ticksMD,
+                        ticksME
+                );
+                telemetry.addData("Alvo ticks", alvoTicks);
+                telemetry.addData(
+                        "Restante mm",
+                        "%.1f",
+                        restantes / TICKS_POR_MM
+                );
+                telemetry.addData("Erro rumo", "%.2f", erroRumo);
+                telemetry.addData(
+                        "Yaw graus/s",
+                        "%.2f",
+                        pid.velocidadeYaw
+                );
+                telemetry.addData(
+                        "Parcela integral",
+                        "%.3f",
+                        KI_RUMO * pid.integral
+                );
+                telemetry.addData("Correcao", "%.3f", correcao);
+                telemetry.addData(
+                        "Potencia MD / ME",
+                        "%.2f / %.2f",
+                        potenciaMD,
+                        potenciaME
+                );
+                telemetry.addData(
+                        "Tempo deslocamento",
+                        "%.2f",
+                        timer.seconds()
+                );
+                telemetry.update();
+                telemetriaTimer.reset();
+            }
+            sleep(10);
+        }
+        parar();
+        motivoFalha = tempoDisponivel()
+                ? "Tempo limite do deslocamento"
+                : "Tempo AUTO esgotado ou STOP";
+        return false;
+    }
+    private boolean coletarDuranteDeslocamento(
+            double distanciaMm,
+            double rumoAlvo,
+            double velocidade) {
+        if (!tempoDisponivel()) {
+            motivoFalha = "Tempo AUTO esgotado ou STOP";
+            return false;
+        }
+        MI.setPower(POTENCIA_INTAKE);
+        try {
+            return andarComRumo(
+                    distanciaMm,
+                    rumoAlvo,
+                    velocidade
+            );
+        } finally {
+            MI.setPower(0);
+        }
+    }
+    private boolean lancarPecasPorTempo(int quantidade) {
+        if (quantidade <= 0) {
+            motivoFalha = "Quantidade invalida";
+            return false;
+        }
+        double tempoNecessario =
+                TEMPO_ACELERACAO_LANCADOR
+                + quantidade * TEMPO_ALIMENTACAO_POR_PECA
+                + (quantidade - 1) * TEMPO_ENTRE_PECAS;
+        if (!tempoDisponivel()
+                || cronometroAuto.seconds() + tempoNecessario
+                >= TEMPO_MAXIMO_AUTO - RESERVA_SEGURANCA) {
+            motivoFalha = "Sem tempo para completar o lancamento";
+            return false;
+        }
+        try {
+            MS.setPower(POTENCIA_LANCAMENTO);
+            if (!esperarAtivo(TEMPO_ACELERACAO_LANCADOR)) {
+                motivoFalha = "Lancador interrompido ao acelerar";
+                return false;
+            }
+            for (int i = 0; i < quantidade; i++) {
+                MI.setPower(POTENCIA_INTAKE);
+                if (!esperarAtivo(TEMPO_ALIMENTACAO_POR_PECA)) {
+                    motivoFalha = "Alimentacao interrompida";
+                    return false;
+                }
+                MI.setPower(0);
+                telemetry.addData(
+                        "Tentativa de lancamento",
+                        "%d / %d",
+                        i + 1,
+                        quantidade
+                );
+                telemetry.update();
+                if (i < quantidade - 1
+                        && !esperarAtivo(TEMPO_ENTRE_PECAS)) {
+                    motivoFalha = "Intervalo de lancamento interrompido";
+                    return false;
+                }
+            }
+            return true;
+        } finally {
+            pararMecanismos();
+        }
+    }
+    private boolean esperarAtivo(double segundos) {
+        ElapsedTime timer = new ElapsedTime();
+        while (tempoDisponivel()
+                && timer.seconds() < segundos) {
+            sleep(10);
+        }
+        return tempoDisponivel();
+    }
+    private void reiniciarEncoders() {
+        parar();
+        MD.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ME.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MD.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ME.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    private double lerYaw() {
+        try {
+            return imu.getRobotYawPitchRollAngles()
+                    .getYaw(AngleUnit.DEGREES);
+        } catch (RuntimeException e) {
+            return Double.NaN;
+        }
+    }
+    private boolean tempoDisponivel() {
+        return opModeIsActive()
+                && cronometroAuto.seconds()
+                < TEMPO_MAXIMO_AUTO - RESERVA_SEGURANCA;
+    }
+    private static double normalizarAngulo(double graus) {
+        while (graus > 180.0) {
+            graus -= 360.0;
+        }
+        while (graus < -180.0) {
+            graus += 360.0;
+        }
+        return graus;
+    }
+    private static double limitar(
+            double valor,
+            double minimo,
+            double maximo) {
+        return Math.max(minimo, Math.min(maximo, valor));
+    }
+    private void mostrarFalha(String etapa) {
+        parar();
+        pararMecanismos();
+        telemetry.addData("Autonomo interrompido", etapa);
+        telemetry.addData("Motivo", motivoFalha);
+        telemetry.addData(
+                "Tempo AUTO",
+                "%.2f s",
+                cronometroAuto.seconds()
+        );
+        telemetry.update();
+    }
+    private void parar() {
+        if (MD != null) {
+            MD.setPower(0);
+        }
+        if (ME != null) {
+            ME.setPower(0);
+        }
+    }
+    private void pararMecanismos() {
+        if (MI != null) {
+            MI.setPower(0);
+        }
+        if (MS != null) {
+            MS.setPower(0);
+        }
+    }
+    private static class ControladorPID {
+        private final ElapsedTime amostra = new ElapsedTime();
+        private double yawAnterior;
+        private double velocidadeYaw;
+        private double integral;
+        private double ultimaSaida;
+        private ControladorPID(double yawInicial) {
+            yawAnterior = yawInicial;
+            amostra.reset();
+        }
+        private double calcular(
+                double erro,
+                double yawAtual,
+                double kp,
+                double ki,
+                double kd,
+                double limite,
+                double ajusteEncoder) {
+            double dt = amostra.seconds();
+            if (dt < 0.001) {
+                return limitar(ultimaSaida, -limite, limite);
+            }
+            amostra.reset();
+            double velocidadeMedida =
+                    normalizarAngulo(yawAtual - yawAnterior) / dt;
+            yawAnterior = yawAtual;
+            double filtro = dt / (0.08 + dt);
+            velocidadeYaw +=
+                    filtro * (velocidadeMedida - velocidadeYaw);
+            double candidata = limitar(
+                    integral + erro * Math.min(dt, 0.10),
+                    -250.0,
+                    250.0
+            );
+            double semLimite =
+                    kp * erro
+                    + ki * candidata
+                    - kd * velocidadeYaw
+                    + ajusteEncoder;
+            boolean saturado =
+                    (semLimite > limite && erro > 0.0)
+                    || (semLimite < -limite && erro < 0.0);
+            if (!saturado) {
+                integral = candidata;
+            }
+            ultimaSaida = limitar(
+                    kp * erro
+                    + ki * integral
+                    - kd * velocidadeYaw
+                    + ajusteEncoder,
+                    -limite,
+                    limite
+            );
+            return ultimaSaida;
+        }
+        private void zerarIntegral() {
+            integral = 0.0;
+        }
+    }
+}
