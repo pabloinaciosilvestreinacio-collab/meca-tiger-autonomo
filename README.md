@@ -2,7 +2,16 @@
 
 Repositorio do codigo autonomo da equipe Meca Tiger FTC #32578.
 
-## Versao atual
+## Versoes e status
+
+- **3.1 (base estavel)**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/autonomo.java`.
+- **4.0 (revisao anterior)**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo4.java`.
+- **4.1 (candidata em testes, apenas na branch de revisao)**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo41.java`.
+- **Teste separado da camera**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/DiagnosticoAprilTag.java`.
+
+A 4.1 usa `getFreshDetections()` e melhora o tratamento de perda de frames, delta angular do PID e conversao de engrenagens. Ainda depende de build no FTC SDK e testes fisicos. Consulte `historico/VALIDACAO_Autonomo_4_1.md` e reproduza a simulacao com `node tests/autonomo41_logic_tests.mjs`.
+
+## Autonomo estavel
 
 `Autonomo 3.1`
 
