@@ -29,6 +29,7 @@ jobs:
           node tests/autonomo50_synthetic_tests.mjs
           node tests/autonomo51_cell_tests.mjs
           node tests/autonomo51_pid_model.mjs
+          node tests/auditoria_documentacao_geral.mjs
 
   compile:
     name: FTC SDK Java - todas as 3.1-5.1
