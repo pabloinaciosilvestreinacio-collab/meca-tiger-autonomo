@@ -6,7 +6,8 @@ const cases = [
     ["autonomo.java", "Autonomo_3_1.txt", "autonomo", "Autonomo 3.1"],
     ["Autonomo32.java", "Autonomo_3_2.txt", "Autonomo32", "Autonomo 3.2"],
     ["Autonomo33.java", "Autonomo_3_3.txt", "Autonomo33", "Autonomo 3.3"],
-    ["Autonomo34.java", "Autonomo_3_4.txt", "Autonomo34", "Autonomo 3.4 - Testes"]
+    ["Autonomo34.java", "Autonomo_3_4.txt", "Autonomo34", "Autonomo 3.4 - Testes"],
+    ["Autonomo35.java", "Autonomo_3_5.txt", "Autonomo35", "Autonomo 3.5 - Bancada"]
 ];
 
 let checks = 0;
@@ -52,7 +53,7 @@ for(const [source, backup, name, label] of cases) {
     verify(balancedJava(content), source+" unbalanced structure");
 }
 
-for (const name of ["Autonomo33.java","Autonomo34.java"]) {
+for (const name of ["Autonomo33.java","Autonomo34.java","Autonomo35.java"]) {
     const c=readFileSync(root+name,"utf8");
     verify(c.includes("LIMITE_DIFERENCA_ENCODER_TICKS"),name+" wheel divergence guard");
     verify(c.includes("tempoPiorCaso()"),name+" timing budget");
@@ -61,4 +62,9 @@ for (const name of ["Autonomo33.java","Autonomo34.java"]) {
     verify(c.includes("ControladorPID"),name+" manual PID");
     verify(c.includes("Ciclos alimentacao comandados"),name+" honest shot telemetry");
 }
+const newest=readFileSync(root+"Autonomo35.java","utf8");
+verify(newest.includes("ModoExecucao.TESTE_LANCADOR"),"v3.5 mode isolate launcher");
+verify(newest.includes('pararTracao();\n                sucesso = sequencia('),"v3.5 traction stop before launcher");
+verify(newest.includes('relogioEtapa.seconds()'),"v3.5 stage timing");
+verify(newest.includes("Ciclos alimentacao comandados"),"v3.5 no false claim of real shots");
 console.log("AUDITORIA ESTATICA OK — "+checks+" verificacoes; NAO e compilacao Java");
