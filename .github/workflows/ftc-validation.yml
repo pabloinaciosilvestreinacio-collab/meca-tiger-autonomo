@@ -16,6 +16,7 @@ jobs:
         run: |
           node tests/autonomo41_logic_tests.mjs
           node tests/autonomo50_synthetic_tests.mjs
+          node tests/autonomo51_cell_tests.mjs
 
   compile-ftc:
     name: Compilar FTC SDK 12.0
@@ -37,7 +38,7 @@ jobs:
       - name: Inserir OpModes do candidato
         run: |
           mkdir -p sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo
-          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo50.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo51.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
           cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/DiagnosticoAprilTag.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
       - name: Compilar SDK FTC integrado
         working-directory: sdk
