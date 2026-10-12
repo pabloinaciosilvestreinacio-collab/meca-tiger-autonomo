@@ -33,7 +33,7 @@ jobs:
       - name: Instalar componentes Android
         run: |
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager "platform-tools" "platforms;android-30" "platforms;android-35" "build-tools;35.0.0"
       - name: Clonar projeto SDK FTC
         run: git clone --depth 1 https://github.com/FIRST-Tech-Challenge/FtcRobotController.git sdk
       - name: Inserir OpModes do candidato
