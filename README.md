@@ -10,7 +10,7 @@
 - **[Guia específico sem câmera](GUIA_AUTONOMO_SEM_CAMERA.md)**: detalhes operacionais adicionais das versões 3.1–3.5.
 - **[Relatórios individuais e históricos](historico/)**: cópias exatas por versão e evidências registradas.
 
-**Status de evidência:** a compilação FTC das versões 3.1–3.5 foi confirmada no [GitHub Actions #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443). Para as versões com câmera, consultar o relatório geral e os logs do workflow de auditoria; não inferir compilação sem log. Testes físicos ainda precisam ser registrados.
+**Status de evidência:** compilação FTC **sem câmera (3.1–3.5)** aprovada no [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443); compilação conjunta **com e sem câmera (3.1–5.1)** aprovada no [run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887). **87 verificações documentais** aprovadas no [run #38321932005](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321932005). Testes físicos continuam pendentes.
 
 
 ## Linha 3.x — Autonomo SEM camera
@@ -40,7 +40,7 @@ Mantem giro -50°, avança 2000 mm coletando, gira +100° e tenta lançar 3 peç
 - Historico: `historico/Autonomo_3_2.txt`
 - Validacao detalhada: `historico/VALIDACAO_Autonomo_3_2.md`
 - Testes: `node tests/autonomo32_logic_tests.mjs` e `node tests/autonomo32_travel_model.mjs`
-- Workflow de compilacao: `.github/workflows/autonomo32-validation.yml` (resultado ainda pendente).
+- Build FTC da versão 3.2 confirmado no run #38319766443 e na compilação conjunta #38321732887.
 
 ## Candidato mais novo: Autonomo 5.1 (branch de revisao)
 
@@ -49,7 +49,7 @@ Mantem giro -50°, avança 2000 mm coletando, gira +100° e tenta lançar 3 peç
 - INIT: D-pad esquerda RED / direita BLUE; cima SCORING / baixo AUDIENCE; A confirma estrategia. Sem confirmacao o AUTO nao move motores.
 - Detecta automaticamente a CELL pontuavel da propria alianca pelo `roll`, mesmo que mude de orientacao.
 - Limites somados + margem: 26,90 s teoricos, dentro de 29 s utilizaveis.
-- Veja `historico/VALIDACAO_VERSOES_4_2_A_5_1.md`. O CI foi configurado mas a compilacao real ainda nao foi confirmada; este codigo **NAO** foi testado fisicamente.
+- Veja `historico/VALIDACAO_VERSOES_4_2_A_5_1.md`. O build FTC conjunto foi **aprovado** no run #38321732887, porém este código **NÃO foi validado fisicamente**.
 - Scripts: `node tests/autonomo50_synthetic_tests.mjs`, `node tests/autonomo51_cell_tests.mjs`, `node tests/autonomo51_pid_model.mjs`.
 - Diagnosticos de campo (NAO acionam motores): `DiagnosticoAprilTag.java` e `DiagnosticoSinais.java`.
 
