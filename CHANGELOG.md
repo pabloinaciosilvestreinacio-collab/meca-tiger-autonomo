@@ -1,5 +1,18 @@
 # Historico de alteracoes
 
+## Autonomo 3.2 — sem camera
+
+- Nova classe `Autonomo32` independente, baseada na 3.1 preservada.
+- Sequencia original inalterada: -50°, coletar 2000 mm, +100°, lancar 3 tentativas temporizadas.
+- Corrige a ultrapassagem de distancia: parada pela media dos encoders, depois correcao final de rumo girando parado.
+- Corrige derivada angular do PID na passagem +180/-180.
+- Watchdog de giro sem progresso e parada ao entrar na tolerancia angular.
+- Reserva 2,45 s + margem para inicio do lancamento, com abort seguro se nao houver tempo.
+- Tratamento de falhas do IMU/runtime, validacao de parametros e modo sem encoder nos motores MI/MS.
+- Preserva `REDUCAO=20.0` como hipotese da 3.1; `FATOR_CALIBRACAO_DISTANCIA=1.0` explicitamente nao aferido.
+- Testes: `tests/autonomo32_logic_tests.mjs` e `tests/autonomo32_travel_model.mjs`.
+- Evidencias: `historico/VALIDACAO_Autonomo_3_2.md`; compilacao FTC/Gradle nao confirmada nem teste fisico executado.
+
 ## Autonomo 5.1
 - Exige confirmacao com A no INIT para impedir movimentos com a alianca/rota selecionadas por engano.
 - Busca dinamicamente CELL pontuavel da propria alianca; `ftcPose.roll` filtra CELL invertida e `bearing` ajustado escolhe mira.
