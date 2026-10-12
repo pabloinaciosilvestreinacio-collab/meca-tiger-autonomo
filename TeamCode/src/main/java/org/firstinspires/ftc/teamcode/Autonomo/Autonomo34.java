@@ -251,6 +251,13 @@ public class Autonomo34 extends LinearOpMode {
     private boolean validarConfiguracao() {
         etapaAtual = "Validacao de configuracao";
         if (!Double.isFinite(TICKS_POR_MM) || TICKS_POR_MM <= 0.0
+                || !Double.isFinite(TICKS_POR_REV_MOTOR) || TICKS_POR_REV_MOTOR <= 0.0
+                || !Double.isFinite(REDUCAO) || REDUCAO <= 0.0
+                || !Double.isFinite(DIAMETRO_RODA_MM) || DIAMETRO_RODA_MM <= 0.0
+                || !Double.isFinite(FATOR_CALIBRACAO_DISTANCIA)
+                || FATOR_CALIBRACAO_DISTANCIA <= 0.0
+                || !Double.isFinite(ANGULO_COLETA)
+                || !Double.isFinite(ANGULO_LANCAMENTO)
                 || !Double.isFinite(DISTANCIA_COLETA_MM)
                 || DISTANCIA_COLETA_MM <= 0.0
                 || DISTANCIA_COLETA_MM * TICKS_POR_MM >= Integer.MAX_VALUE
@@ -261,7 +268,21 @@ public class Autonomo34 extends LinearOpMode {
             motivoFalha = "Configuracao mecanica ou da estrategia invalida";
             return false;
         }
-        if (MIN_POTENCIA_VIRADA < 0.0
+        if (!Double.isFinite(MIN_POTENCIA_VIRADA)
+                || !Double.isFinite(MAX_POTENCIA_VIRADA)
+                || !Double.isFinite(MAX_CORRECAO_TOTAL)
+                || !Double.isFinite(MAX_CORRECAO_ENCODER)
+                || !Double.isFinite(TEMPO_MAXIMO_AUTO)
+                || !Double.isFinite(RESERVA_SEGURANCA)
+                || !Double.isFinite(tempoPiorCaso())
+                || !Double.isFinite(POTENCIA_INTAKE)
+                || !Double.isFinite(POTENCIA_LANCAMENTO)
+                || Math.abs(POTENCIA_INTAKE) > 1.0
+                || Math.abs(POTENCIA_LANCAMENTO) > 1.0
+                || TEMPO_ACELERACAO_LANCADOR < 0.0
+                || TEMPO_ALIMENTACAO_POR_PECA <= 0.0
+                || TEMPO_ENTRE_PECAS < 0.0
+                || MIN_POTENCIA_VIRADA < 0.0
                 || MIN_POTENCIA_VIRADA > MAX_POTENCIA_VIRADA
                 || MAX_CORRECAO_ENCODER > MAX_CORRECAO_TOTAL
                 || LIMITE_DIFERENCA_ENCODER_TICKS <= 0
