@@ -59,7 +59,7 @@ for(const file of ["README.md","MANUAL_GERAL_CALIBRACAO_TESTES.md","RELATORIO_GE
 }
 verify(manual.includes("3.5") && manual.includes("5.1"), "both families required");
 verify(report.includes("BUILD SUCCESSFUL"), "build evidence missing");
-verify(report.includes("NÃO CONFIRMADO") || report.includes("Não confirmado"),
-  "unverified results should remain explicitly marked");
+verify(report.includes("Sem registro vinculado") && report.includes("nenhum resultado físico"),
+  "non-validated physical results must remain explicitly stated");
 console.log(JSON.stringify({status:"PASS",versions:versions.length,checks:count,
     note:"Verificacao estatica documental; nao compila Java nem testa hardware"},null,2));
