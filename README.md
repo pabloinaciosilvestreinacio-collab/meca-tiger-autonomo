@@ -13,7 +13,7 @@
 - **Manual operacional:** [GUIA_AUTONOMO_SEM_CAMERA.md](GUIA_AUTONOMO_SEM_CAMERA.md).
 - **Historico de testes:** `historico/VALIDACAO_Autonomo_3_3.md`, `...3_4.md` e `...3_5.md`.
 - **Teste reproduzivel:** `node tests/autonomo_sem_camera_3x.mjs` e `node tests/auditoria_autonomo_3x.mjs`.
-- **FTC SDK build:** workflow `.github/workflows/ftc-sem-camera.yml`. Compilacao e hardware **nao confirmados** ate haver evidencia.
+- **FTC SDK build:** **APROVADO** no [GitHub Actions run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443), com `BUILD SUCCESSFUL`. **Hardware real ainda não testado.** Relatório: `historico/RELATORIO_CI_SEM_CAMERA_3X.md`.
 
 A linha 3.x e independente da 4.x/5.x, que utiliza camera. Nenhum arquivo original foi sobrescrito.
 
