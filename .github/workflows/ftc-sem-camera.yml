@@ -41,7 +41,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Conferir Android SDK preinstalado
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          command -v sdkmanager
+          sdkmanager --version
       - name: Instalar componentes SDK Android
         run: |
           yes | sdkmanager --licenses >/dev/null || true
