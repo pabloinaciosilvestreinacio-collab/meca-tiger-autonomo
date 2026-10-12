@@ -79,7 +79,7 @@ public class Autonomo4 extends LinearOpMode {
     private static final double LIMITE_INTEGRAL = 250.0;
     private static final double TEMPO_FILTRO_DERIVADA = 0.08;
 
-    private static final double MIN_POTENCIA_VIRADA = 0.08;
+    private static final double MIN_POTENCIA_VIRADA = 0.10;
     private static final double MAX_POTENCIA_VIRADA = 0.50;
     private static final double TOLERANCIA_VIRADA = 2.0;
     private static final double TOLERANCIA_VELOCIDADE_YAW = 8.0;
@@ -138,7 +138,7 @@ public class Autonomo4 extends LinearOpMode {
     private static final LadoCampo LADO_ESTRATEGIA = LadoCampo.SCORING;
 
     private static final double KP_ALINHAMENTO_VISAO = 0.010;
-    private static final double MIN_POTENCIA_ALINHAMENTO = 0.07;
+    private static final double MIN_POTENCIA_ALINHAMENTO = 0.10;
     private static final double MAX_POTENCIA_ALINHAMENTO = 0.25;
 
     private static final double TOLERANCIA_BEARING_GRAUS = 2.0;
@@ -159,7 +159,14 @@ public class Autonomo4 extends LinearOpMode {
         try {
             configurarHardware();
             boolean imuInicializado = configurarImu();
-            configurarVisao();
+            boolean configuracaoValida = validarConfiguracao();
+
+            if (configuracaoValida) {
+                configurarVisao();
+            } else {
+                estadoVisao = "Nao iniciada: configuracao invalida";
+            }
+
             reiniciarEncoders();
 
             telemetry.addLine("Meca Tiger - Autonomo 4.0");
@@ -173,6 +180,11 @@ public class Autonomo4 extends LinearOpMode {
             waitForStart();
 
             if (isStopRequested()) {
+                return;
+            }
+
+            if (!configuracaoValida) {
+                mostrarFalha();
                 return;
             }
 
@@ -229,6 +241,68 @@ public class Autonomo4 extends LinearOpMode {
             pararTudo();
             fecharVisao();
         }
+    }
+
+    private boolean validarConfiguracao() {
+        etapaAtual = "Validacao de configuracao";
+
+        if (!Double.isFinite(TICKS_POR_MM) || TICKS_POR_MM <= 0.0) {
+            motivoFalha = "TICKS_POR_MM invalido";
+            return false;
+        }
+
+        if (TICKS_POR_REV_MOTOR <= 0.0
+                || REDUCAO_CARTUCHO_4_PARA_1 <= 0.0
+                || REDUCAO_CARTUCHO_5_PARA_1 <= 0.0
+                || DIAMETRO_RODA_MM <= 0.0
+                || FATOR_CALIBRACAO_DISTANCIA <= 0.0) {
+            motivoFalha = "Parametros mecanicos invalidos";
+            return false;
+        }
+
+        if (Math.abs(ANGULO_COLETA) > 180.0
+                || Math.abs(ANGULO_LANCAMENTO) > 180.0
+                || DISTANCIA_COLETA_MM <= 0.0
+                || VELOCIDADE_COLETA < MIN_POTENCIA_DESLOCAMENTO
+                || VELOCIDADE_COLETA > 1.0) {
+            motivoFalha = "Parametros da estrategia invalidos";
+            return false;
+        }
+
+        if (MIN_POTENCIA_VIRADA <= 0.0
+                || MIN_POTENCIA_VIRADA > MAX_POTENCIA_VIRADA
+                || MIN_POTENCIA_ALINHAMENTO <= 0.0
+                || MIN_POTENCIA_ALINHAMENTO > MAX_POTENCIA_ALINHAMENTO
+                || MAX_CORRECAO_ENCODER > MAX_CORRECAO_TOTAL) {
+            motivoFalha = "Limites de controle invalidos";
+            return false;
+        }
+
+        if (CAMERA_LARGURA <= 0
+                || CAMERA_ALTURA <= 0
+                || DECIMACAO_APRILTAG <= 0) {
+            motivoFalha = "Parametros da camera invalidos";
+            return false;
+        }
+
+        if (!ehClusterBiobuzz(clusterAlvoDaEstrategia())) {
+            motivoFalha = "Cluster da estrategia invalido";
+            return false;
+        }
+
+        double tempoLancamento =
+                calcularTempoLancamento(QUANTIDADE_LANCAMENTOS);
+
+        if (QUANTIDADE_LANCAMENTOS <= 0
+                || tempoLancamento + RESERVA_SEGURANCA
+                >= TEMPO_MAXIMO_AUTO) {
+            motivoFalha = "Orcamento de tempo do lancamento invalido";
+            return false;
+        }
+
+        motivoFalha = "";
+        etapaAtual = "Inicializacao";
+        return true;
     }
 
     private void configurarHardware() {
@@ -1089,15 +1163,19 @@ public class Autonomo4 extends LinearOpMode {
     }
 
     private double normalizarAngulo(double graus) {
-        while (graus > 180.0) {
-            graus -= 360.0;
+        if (!Double.isFinite(graus)) {
+            return Double.NaN;
         }
 
-        while (graus < -180.0) {
-            graus += 360.0;
+        double normalizado = graus % 360.0;
+
+        if (normalizado > 180.0) {
+            normalizado -= 360.0;
+        } else if (normalizado < -180.0) {
+            normalizado += 360.0;
         }
 
-        return graus;
+        return normalizado;
     }
 
     private double limitar(double valor, double minimo, double maximo) {
