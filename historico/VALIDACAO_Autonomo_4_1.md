@@ -69,3 +69,14 @@ Cada etapa tem timeout, mas a soma dos piores casos do código é:
 
 ## Reversão
 O 3.1 e o 4.0 não foram sobrescritos. Descartar a branch `revisao/autonomo-4.1-validacao` retorna ao comportamento `main` sem impacto no autônomo 3.1. Para usar o 4.1, copiar apenas `Autonomo41.java` para o projeto SDK real, após conclusão dos ensaios.
+
+
+---
+
+## Atualização de evidência de compilação — 12/10/2026
+
+**FTC SDK integrado: BUILD APROVADO.** O [GitHub Actions run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887) compilou conjuntamente **todas as classes Java de autônomo com e sem câmera**, incluindo esta versão 4.1, com `TeamCode:compileDebugJavaWithJavac`, `TeamCode:assembleDebug` e a mensagem **BUILD SUCCESSFUL in 2m 42s**.
+
+O job de testes matemáticos do mesmo run terminou com **SUCCESS**. O teste tests/autonomo41_logic_tests.mjs foi executado novamente no CI, com 7 checks e 7.500 cenários sintéticos de câmera. Não houve detecção da C270 real.
+
+**Limite:** compilação do código no FTC SDK oficial obtido no CI NÃO significa montagem/calibração da C270, motores ou lançador validada fisicamente. Antes de instalar, conferir o projeto FTC SDK local, hardwareMap, sinais e campo. Consulta consolidada: [RELATORIO_GERAL_VALIDACAO_SOFTWARE.md](../RELATORIO_GERAL_VALIDACAO_SOFTWARE.md).
