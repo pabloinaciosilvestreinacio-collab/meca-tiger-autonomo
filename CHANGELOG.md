@@ -1,5 +1,18 @@
 # Historico de alteracoes
 
+## Autonomo 4.1 — candidato, branch de revisao
+
+- Criado `Autonomo41.java` sem alterar o 3.1 nem o 4.0.
+- Video com `getFreshDetections()` para evitar reutilizar frames antigos.
+- Comando visual interrompido quando o frame fica mais velho que 80 ms; confirmacao zerada apos 180 ms e fallback apos 350 ms sem alvo depois de iniciar movimento.
+- Derivada do PID angular corrigida para continuidade perto de +/-180 graus.
+- Reducao teorica calculada com dentes reais 76/21 e 68/13 (18,9304:1); inclui fator de eventual transmissao adicional nas rodas.
+- OpMode `DiagnosticoAprilTag` sem motores para verificar a C270 e clusters do BIOBUZZ.
+- Testes reproduziveis em `tests/autonomo41_logic_tests.mjs`: 7 assertions e 7.500 cenarios de visao executados (modelo simplificado).
+- Detectada limitacao estrutural do orcamento total: soma dos timeouts pode exceder 29 s.
+- Evidencias/pendencias em `historico/VALIDACAO_Autonomo_4_1.md`.
+- Sem build do projeto FTC completo, sem validacao de hardware, sem merge em `main`.
+
 ## Autonomo 4.0
 
 - Nova linha com camera, mantendo o Autonomo 3.1 intacto.
