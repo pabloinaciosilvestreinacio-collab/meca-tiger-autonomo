@@ -82,6 +82,11 @@ Giro 5 s + deslocamento 10 s + eventual correção 1,5 s + giro 5 s + lançament
 
 Definir tolerâncias **antes** dos ensaios e registrar cada execução, inclusive falhas. Três execuções bem-sucedidas são um começo, não certificação estatística.
 
+
+
+### Atualização de validação CI — 12/10/2026
+**Compilação FTC real aprovada:** GitHub Actions [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443), `compileDebugJavaWithJavac` e `assembleDebug` com `BUILD SUCCESSFUL in 2m 16s`. Teste Node: 21 assertions e 5.000 cenários; auditoria: 58 verificações. **Não representa teste físico**. Ver `historico/RELATORIO_CI_SEM_CAMERA_3X.md`.
+
 ## Testes de software e build
 ```bash
 node tests/autonomo32_logic_tests.mjs
