@@ -178,7 +178,7 @@ Os testes JavaScript são **modelos de lógica e sensores artificiais**, não ex
 Para compilação real, integrar os Java à árvore completa do [FTC SDK oficial](https://github.com/FIRST-Tech-Challenge/FtcRobotController) e executar **./gradlew :TeamCode:assembleDebug** (Linux) ou **gradlew.bat :TeamCode:assembleDebug** (Windows).
 
 - **Build das versões 3.1–3.5 confirmado:** [GitHub Actions run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443). Isso não comprova testes físicos.
-- **Build 4.0–5.1:** consultar [relatório geral](RELATORIO_GERAL_VALIDACAO_SOFTWARE.md) e logs do workflow de auditoria integrada; não declarar sucesso sem log do Gradle.
+- **Build 4.0–5.1 CONFIRMADO:** [GitHub Actions run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887): todas as classes Java com e sem câmera compilaram juntas no TeamCode oficial (BUILD SUCCESSFUL em 2m 42s). **Não equivale a testá-las no robô nem valida C270 física.**
 
 ## 7. Padronização do registro e controle de versões
 
