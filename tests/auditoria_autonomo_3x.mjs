@@ -67,4 +67,5 @@ verify(newest.includes("ModoExecucao.TESTE_LANCADOR"),"v3.5 mode isolate launche
 verify(newest.includes('pararTracao();\n                sucesso = sequencia('),"v3.5 traction stop before launcher");
 verify(newest.includes('relogioEtapa.seconds()'),"v3.5 stage timing");
 verify(newest.includes("Ciclos alimentacao comandados"),"v3.5 no false claim of real shots");
+verify(newest.includes("gamepad1.a && !botaoAAnterior"),"v3.5 requires fresh confirmation press");
 console.log("AUDITORIA ESTATICA OK — "+checks+" verificacoes; NAO e compilacao Java");
