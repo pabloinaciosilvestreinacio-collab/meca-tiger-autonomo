@@ -1,5 +1,28 @@
 # Historico de alteracoes
 
+## Autonomo 3.4 (novo, sem camera)
+
+- Classe separada `Autonomo34.java` e OpMode `Autonomo 3.4 - Testes`.
+- Selecao no INIT: B = giros +20° e -20°; X = 350 mm a potencia 0,22; Y = ciclo completo de 3.3.
+- Confirmacao obrigatoria pelo botao A; mudar modo remove confirmacao; START sem confirmar bloqueia movimentos.
+- Nos dois modos de teste: sem ligar `MI` ou `MS` para coletar/alimentar/lancar.
+- Backup `historico/Autonomo_3_4.txt` e documento `historico/VALIDACAO_Autonomo_3_4.md`.
+
+## Autonomo 3.3 (novo, sem camera)
+
+- Nova classe `Autonomo33.java` derivada exatamente de `Autonomo32.java`, mantendo a 3.2 inalterada.
+- Timeout de giro: 7 -> 5 s; timeout de translacao: 12 -> 10 s. Correcao final de rumo 1,5 s preservada.
+- Validacao preventiva de parametros, limites dos motores e prazo maximo: 24,3 s de etapas mais margem, inferior a 29 s de tempo seguro.
+- Monitor de divergencia dos encoders: cancela se abs(MD-ME)>220 ticks. Monitor de erro de rumo: cancela se abs(erro)>35°.
+- Telemetria mais explicita, incluindo diferenca dos encoders e 'ciclos de alimentacao comandados' sem afirmar que houve 3 lancamentos.
+- Corrigida deteccao de numeros invalidos na configuracao (NaN, infinidade e potencias fora de [-1, 1]).
+- Backups `historico/Autonomo_3_3.txt`, relatorio `historico/VALIDACAO_Autonomo_3_3.md`.
+- Simulacao JS executada: 17 assertions; 5.000 cenarios em cinco condicoes (1000 normais concluindo, 4.000 falhas sinteticas interrompidas pelos respectivos guardas).
+- Compilacao no SDK real nao confirmada; dados de atrito, sinais do IMU, encoders, reducao, RPM e lancamentos nao estao calibrados.
+
+### Guia completo
+[GUIA_AUTONOMO_SEM_CAMERA.md](GUIA_AUTONOMO_SEM_CAMERA.md). Nao inclui nem modifica a linha 4.x/5.x com camera.
+
 ## Autonomo 3.2 — sem camera
 
 - Nova classe `Autonomo32` independente, baseada na 3.1 preservada.
