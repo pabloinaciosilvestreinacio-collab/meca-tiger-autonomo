@@ -3,6 +3,7 @@
 ## Autonomo 3.5 — Bancada (novo, sem camera)
 
 - Adiciona modo `TESTE_LANCADOR` com D-pad para cima no INIT; continua exigindo confirmacao por A, seguido de START.
+- Confirmacao pela **borda de subida** do botao A: trocar o modo com A ja pressionado nao confirma a nova escolha.
 - O modo isolado de MI/MS desliga a tracao antes dos tres ciclos de alimentacao/lançamento por tempo, sem mover o robo.
 - `sequencia()` registra tempo e resultado individual por etapa; excecoes identificam a etapa que falhou.
 - Mantem os modos da 3.4, toda a logica de controle da 3.3 e todas as versoes anteriores preservadas.
