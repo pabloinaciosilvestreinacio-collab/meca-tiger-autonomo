@@ -31,13 +31,15 @@ Leia com o [Manual Geral de Calibração e Testes](MANUAL_GERAL_CALIBRACAO_TESTE
 | **3.3** | Autonomo/Autonomo33.java | Não | Validação de parâmetros, soma temporal 24,30 s, limites de diferença de encoders (220 ticks) e desvio de yaw (35°) | **E4 confirmado** |
 | **3.4** | Autonomo/Autonomo34.java | Não | Testes separados B (giro ±20°), X (350 mm) e Y (completo), confirmação A | **E4 confirmado** |
 | **3.5** | Autonomo/Autonomo35.java | Não | D-pad cima testa lançador MI/MS sem tração; telemetria por etapa; confirmação por novo toque em A | **E4 confirmado; candidata à bancada** |
-| **4.0** | Autonomo/Autonomo4.java | Sim | VisionPortal, C270 640 × 480, filtro de clusters e roll, alinhamento visual e fallback | E1/E3 relatados; build câmera separado pendente de confirmação |
-| **4.1** | Autonomo/Autonomo41.java | Sim | getFreshDetections, interrupção por falta de frames, derivada angular contínua, relação pelos dentes da caixa | E2/E3 registrados; build câmera pendente de confirmação |
-| **4.2** | Autonomo/Autonomo42.java | Sim | Watchdog de giro, timeouts mais compatíveis com 30 s, reserva de tempo para o lançador | E2/E3 registrados; build câmera pendente |
-| **5.0** | Autonomo/Autonomo50.java | Sim | Aliança/lado selecionáveis no INIT, sem editar constantes a cada partida | E2/E3 registrados; build câmera pendente |
-| **5.1** | Autonomo/Autonomo51.java | Sim | Confirmação A no INIT, busca de CELL pontuável dentro da aliança correta | E2/E3 registrados; **candidata de visão não homologada** |
+| **4.0** | Autonomo/Autonomo4.java | Sim | VisionPortal, C270 640 × 480, filtro de clusters e roll, alinhamento visual e fallback | **E4 confirmado**; simulações antigas nem todas verificáveis |
+| **4.1** | Autonomo/Autonomo41.java | Sim | getFreshDetections, interrupção por falta de frames, derivada angular contínua, relação pelos dentes da caixa | **E2/E3 em CI + E4 confirmado** |
+| **4.2** | Autonomo/Autonomo42.java | Sim | Watchdog de giro, timeouts mais compatíveis com 30 s, reserva de tempo para o lançador | **E2/E3 no conjunto + E4 confirmado** |
+| **5.0** | Autonomo/Autonomo50.java | Sim | Aliança/lado selecionáveis no INIT, sem editar constantes a cada partida | **E2/E3 em CI + E4 confirmado** |
+| **5.1** | Autonomo/Autonomo51.java | Sim | Confirmação A no INIT, busca de CELL pontuável dentro da aliança correta | **E2/E3 em CI + E4 confirmado; sem ensaio físico** |
 
 As versões 2 e 3 estão em arquivos históricos; ambas usam classe Java chamada autonomo. **Não copiar versões antigas com classe homônima para o mesmo pacote ao mesmo tempo.** A 3.1 existente usa igualmente a classe autonomo. Os arquivos Java 3.2+ possuem classes distintas.
+
+**Observação histórica de PID:** a versão 2 registrava constantes P/I/D; a versão 3 intermediária usava parâmetros de giro proporcionais/derivativos sem os ganhos integrais da 3.1; a **3.1** estabeleceu novamente PID manual completo com integrador limitado e filtragem da derivada. Não inferir que todas as 12 versões usam exatamente o mesmo controlador ou a mesma calibração.
 
 O registro histórico tem 12 versões: 2, 3, 3.1, 3.2, 3.3, 3.4, 3.5, 4.0, 4.1, 4.2, 5.0 e 5.1. Cada versão 3.1–5.1 possui cópia de texto em historico/ com conteúdo equivalente ao Java versionado; os arquivos 2/3 são as próprias cópias históricas.
 
@@ -104,7 +106,9 @@ Os scripts executam equações em JavaScript (não FTC SDK). A taxa de sucesso *
 
 O documento histórico relata para 5.0: 22 assertions e 10.000 cenários; para 5.1, 22.656 verificações de escolha de CELL e 20.000 giros PID simulados. **Conferir logs de execução antes de tratar resultados antigos como evidência de CI.**
 
-**Condição de compilação:** o workflow existente .github/workflows/ftc-validation.yml foi criado, mas nenhuma compilação dessas classes com um resultado de Gradle verificável foi identificada durante a auditoria inicial. **STATUS E4 câmera: NÃO CONFIRMADO NESTA ETAPA.** O workflow complementar .github/workflows/ftc-auditoria-todas-versoes.yml foi adicionado na branch de documentação para executar **todos os testes e o build FTC com as duas linhas simultaneamente**. O status precisa ser atualizado apenas após checar jobs/logs correspondentes.
+**Compilação REAL da câmera — CONFIRMADA:** o workflow complementar [.github/workflows/ftc-auditoria-todas-versoes.yml](.github/workflows/ftc-auditoria-todas-versoes.yml) executou com sucesso no [GitHub Actions #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887). O job **FTC SDK Java - todas as 3.1-5.1** copiou todos os arquivos Java da pasta Autonomo (incluindo 4.0, 4.1, 4.2, 5.0, 5.1, DiagnosticoAprilTag e DiagnosticoSinais) para o clone do projeto oficial FIRST-Tech-Challenge/FtcRobotController e completou **TeamCode:compileDebugJavaWithJavac** e **TeamCode:assembleDebug** com **BUILD SUCCESSFUL in 2m 42s**. A compilação incluiu também as classes 3.1–3.5, sem conflitos de classe/importação. Isso comprova compatibilidade com **o checkout oficial do SDK utilizado no CI**, mas o workflow não fixa um SHA de upstream e não valida o SDK instalado no Control Hub da equipe.
+
+**Execução REAL dos testes de software das duas linhas:** o job de testes do mesmo [run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887) também terminou com **SUCCESS** para todos os oito scripts Node. Foram reexecutados testes de 3.2/3.x, os sete checks matemáticos 4.1, 7.500 cenários sintéticos de visão, 22 assertions de 5.0, 10.000 listas de escolha de CELL da 5.1 e 20.000 giros com modelo PID P/I/D. A execução adicional [run #38321932005](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321932005) confirmou também o script de auditoria documental com **12 versões / 87 verificações** aprovadas. Todos estes testes continuam artificiais, **sem imagens reais da C270 ou acionamento de motores**.
 
 **Distinção crítica:** o código 4.0 usa getDetections(), que pode reutilizar resultado antigo; a 4.1+ usa getFreshDetections() e limita a idade de comandos de visão. **Isso é uma melhoria de segurança, não uma calibração de câmera comprovada.**
 
@@ -136,13 +140,13 @@ O documento histórico relata para 5.0: 22 assertions e 10.000 cenários; para 5
 | 3.3 | Backup/documento individual | 21 assertions/5.000 cenários na auditoria 3.x | **Aprovado** | Sem registro vinculado | Candidata de bancada |
 | 3.4 | Backup/documento individual | Auditoria e testes de modos | **Aprovado** | Sem registro vinculado | Testes de tração |
 | **3.5** | Backup/documento individual | Auditoria e testes de modos | **Aprovado** | Sem registro vinculado | **Candidata preferida sem câmera** |
-| 4.0 | Backup/documento individual | Registros históricos | **Não confirmado** | Sem registro vinculado | Histórico de visão |
-| 4.1 | Backup/documento individual | Modelos/script 4.1 | **Não confirmado** | Sem registro vinculado | Revisão de visão |
-| 4.2 | Backup/documento consolidado | Modelos/script 5.0 | **Não confirmado** | Sem registro vinculado | Base temporal com câmera |
-| 5.0 | Backup/documento consolidado | Script de escolhas e tempo | **Não confirmado** | Sem registro vinculado | Interface no INIT |
-| **5.1** | Backup/documento consolidado | Modelo de clusters/PID | **Não confirmado** | Sem registro vinculado | **Candidata com câmera** |
+| 4.0 | Backup/documento individual | Registros históricos (resultados anteriores nem todos reproduzidos) | **Aprovado: CI #38321732887** | Sem registro vinculado | Histórico de visão |
+| 4.1 | Backup/documento individual | Modelo/script 4.1 **executado no CI** | **Aprovado: CI #38321732887** | Sem registro vinculado | Revisão de visão |
+| 4.2 | Backup/documento consolidado | Modelos de orçamento e regressões da linha executados no CI | **Aprovado: CI #38321732887** | Sem registro vinculado | Base temporal com câmera |
+| 5.0 | Backup/documento consolidado | Scripts de escolha e tempo **executados no CI** | **Aprovado: CI #38321732887** | Sem registro vinculado | Interface no INIT |
+| **5.1** | Backup/documento consolidado | Scripts de clusters e PID **executados no CI** | **Aprovado: CI #38321732887** | Sem registro vinculado | **Candidata com câmera, bancada pendente** |
 
-**A atualização da coluna Build FTC para a câmera exige log REAL de TeamCode:assembleDebug (não basta análise de imports).** O relatório deve ser atualizado após a execução, mantendo o identificador de job e o hash do conteúdo compilado.
+**A coluna Build FTC para a câmera foi atualizada após verificar o log real do job #115051141045 (run #38321732887), com TeamCode:assembleDebug e BUILD SUCCESSFUL.** Continuam pendentes a calibração e os testes físicos de câmera, tração e mecanismos. É essencial registrar o commit exato quando o código for instalado no robô.
 
 ## 8. Reprodução e auditoria contínua
 
@@ -186,4 +190,4 @@ Preencher [MODELO_REGISTRO_ENSAIO_AUTONOMO.md](MODELO_REGISTRO_ENSAIO_AUTONOMO.m
 
 **Fontes primárias:** código e relatórios do repositório, [AGENTS.md](AGENTS.md), [skill ftc-engineer](.agents/skills/ftc-engineer/SKILL.md), [especificação de validação](.agents/skills/ftc-engineer/references/validation.md); [FTC SDK](https://github.com/FIRST-Tech-Challenge/FtcRobotController).
 
-**Conclusão nesta revisão:** código e histórico organizados; **compilação real 3.1–3.5 confirmada**; a linha com câmera exige verificação específica; **nenhum resultado físico medido pode ser deduzido dos testes de software**.
+**Conclusão atualizada:** código e histórico das 12 versões organizados; **compilação real de 3.1–3.5 e 4.0–5.1 confirmada no CI**, testes matemáticos de ambas as linhas aprovados e auditoria documental 12/12 aprovada. **Nenhuma versão foi homologada fisicamente; a C270 real, sensores, motores e lançamento ainda exigem medições.**
