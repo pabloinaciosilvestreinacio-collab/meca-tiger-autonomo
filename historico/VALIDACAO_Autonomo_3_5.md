@@ -8,7 +8,7 @@ Origem: `Autonomo34.java`. Arquivos 3.1, 3.2, 3.3 e 3.4 preservados.
 - Novo modo `TESTE_LANCADOR` selecionável com **D-pad para cima** durante o INIT, além dos modos pré-existentes: B = giro +20/-20, X = percorrer 350 mm, Y = rotina completa.
 - O novo modo comanda **somente MI e MS** por meio de `lancarPecasPorTempo(3)`, sem solicitar movimento de MD ou ME. Antes de executá-lo, o código chama `pararTracao()`.
 - **Risco físico importante:** `TESTE_LANCADOR` poderá lançar peças. Não usar perto de pessoas e nunca em ambiente sem supervisão.
-- O modo padrão continua `GIRO_CURTO`. Um modo só executa após **A confirmar** e depois **START**. Mudar de modo remove a confirmação.
+- O modo padrão continua `GIRO_CURTO`. Um modo só executa após **A confirmar** e depois **START**. Mudar de modo remove a confirmação. O toque de A deve acontecer **depois** da mudança de modo; manter A pressionado durante a troca não confirma.
 - A função `sequencia` agora mede o tempo de cada tarefa por `ElapsedTime` e mostra `Tempo ultima etapa` e `Resultado ultima etapa` na telemetria.
 - Falhas de `RuntimeException` registram a etapa que estava ativa, em vez de substituí-la pelo rótulo genérico de falha.
 - Limites, PID, watchdog, parada da tração, reserva de tempo, coleta e lançamento da 3.3 foram preservados integralmente.
