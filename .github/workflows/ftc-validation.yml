@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Executar testes
-        run: node tests/autonomo41_logic_tests.mjs
+        run: |
+          node tests/autonomo41_logic_tests.mjs
+          node tests/autonomo50_synthetic_tests.mjs
 
   compile-ftc:
     name: Compilar FTC SDK 12.0
