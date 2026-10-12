@@ -1,0 +1,60 @@
+name: FTC Autonomo sem camera 3.x
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo3*.java'
+      - 'tests/autonomo_sem_camera_3x.mjs'
+      - '.github/workflows/ftc-sem-camera.yml'
+  push:
+    branches: [desenvolvimento/autonomo-sem-camera-3x-20261012]
+  workflow_dispatch:
+
+jobs:
+  logic:
+    name: Validacao sintetica sem camera
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Simulacao PID, encoders e watchdog
+        run: node tests/autonomo_sem_camera_3x.mjs
+      - name: Impedir dependencias de visao nas classes 3.x
+        run: |
+          if grep -nE 'AprilTag|VisionPortal|WebcamName|\.vision\.' TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo3{2,3,4}.java; then
+            echo "Dependencia de camera detectada na linha 3.x"
+            exit 1
+          fi
+
+  compile:
+    name: FTC SDK compile :TeamCode:assembleDebug
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Instalar componentes SDK Android
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-30" "platforms;android-35" "build-tools;35.0.0"
+      - name: Obter projeto FTC SDK oficial
+        run: git clone --depth 1 https://github.com/FIRST-Tech-Challenge/FtcRobotController.git sdk
+      - name: Copiar somente classes sem camera para o FTC TeamCode
+        run: |
+          mkdir -p sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/autonomo.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo32.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo33.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo34.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/
+      - name: Compilar classes no FTC SDK
+        working-directory: sdk
+        run: |
+          chmod +x gradlew
+          ./gradlew :TeamCode:assembleDebug --no-daemon --stacktrace
