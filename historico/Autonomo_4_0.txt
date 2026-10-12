@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomo;
 
+import android.util.Size;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,11 +50,23 @@ public class Autonomo4 extends LinearOpMode {
     private static final int QUANTIDADE_LANCAMENTOS = 3;
 
     private static final double TICKS_POR_REV_MOTOR = 28.0;
-    private static final double REDUCAO = 20.0;
+
+    // UltraPlanetary REV: relacoes reais dos cartuchos, nao as nominais.
+    private static final double REDUCAO_CARTUCHO_4_PARA_1 = 3.61;
+    private static final double REDUCAO_CARTUCHO_5_PARA_1 = 5.23;
+    private static final double REDUCAO_TOTAL =
+            REDUCAO_CARTUCHO_4_PARA_1 * REDUCAO_CARTUCHO_5_PARA_1;
+
     private static final double DIAMETRO_RODA_MM = 90.0;
+
+    // Ajustar somente depois de medir no robo real:
+    // fator = distancia_comandada / distancia_real_medida.
+    private static final double FATOR_CALIBRACAO_DISTANCIA = 1.0;
+
     private static final double TICKS_POR_MM =
-            (TICKS_POR_REV_MOTOR * REDUCAO)
-                    / (Math.PI * DIAMETRO_RODA_MM);
+            ((TICKS_POR_REV_MOTOR * REDUCAO_TOTAL)
+                    / (Math.PI * DIAMETRO_RODA_MM))
+                    * FATOR_CALIBRACAO_DISTANCIA;
 
     private static final double KP_VIRADA = 0.012;
     private static final double KI_VIRADA = 0.00012;
@@ -65,7 +79,7 @@ public class Autonomo4 extends LinearOpMode {
     private static final double LIMITE_INTEGRAL = 250.0;
     private static final double TEMPO_FILTRO_DERIVADA = 0.08;
 
-    private static final double MIN_POTENCIA_VIRADA = 0.08;
+    private static final double MIN_POTENCIA_VIRADA = 0.10;
     private static final double MAX_POTENCIA_VIRADA = 0.50;
     private static final double TOLERANCIA_VIRADA = 2.0;
     private static final double TOLERANCIA_VELOCIDADE_YAW = 8.0;
@@ -81,9 +95,8 @@ public class Autonomo4 extends LinearOpMode {
     private static final double MIN_POTENCIA_RODA = 0.08;
 
     private static final int TOLERANCIA_DISTANCIA_TICKS = 25;
-    private static final int TOLERANCIA_DIFERENCA_TICKS = 65;
-    private static final int LIMITE_ULTRAPASSAGEM_TICKS = 95;
     private static final double TOLERANCIA_RUMO_DESLOCAMENTO = 5.0;
+    private static final double TEMPO_CORRECAO_FINAL_RUMO = 1.50;
 
     private static final int PROGRESSO_MINIMO_TICKS = 6;
     private static final double TEMPO_SEM_PROGRESSO = 1.20;
@@ -96,7 +109,16 @@ public class Autonomo4 extends LinearOpMode {
     private static final double TEMPO_ENTRE_PECAS = 0.15;
 
     private static final String NOME_WEBCAM = "Webcam 1";
+
+    // A Logitech C270 possui calibracao oficial do SDK em 640x480.
+    private static final int CAMERA_LARGURA = 640;
+    private static final int CAMERA_ALTURA = 480;
     private static final int DECIMACAO_APRILTAG = 2;
+
+    // Corrige eventual desalinhamento mecanico entre o eixo optico
+    // da camera e o eixo real de lancamento do robo.
+    // Positivo desloca o alvo desejado para bearing positivo.
+    private static final double OFFSET_BEARING_CAMERA_GRAUS = 0.0;
 
     // Clusters oficiais BIOBUZZ 2026-2027.
     private static final String CLUSTER_RED_SCORING = "RED SCORING";
@@ -116,7 +138,7 @@ public class Autonomo4 extends LinearOpMode {
     private static final LadoCampo LADO_ESTRATEGIA = LadoCampo.SCORING;
 
     private static final double KP_ALINHAMENTO_VISAO = 0.010;
-    private static final double MIN_POTENCIA_ALINHAMENTO = 0.07;
+    private static final double MIN_POTENCIA_ALINHAMENTO = 0.10;
     private static final double MAX_POTENCIA_ALINHAMENTO = 0.25;
 
     private static final double TOLERANCIA_BEARING_GRAUS = 2.0;
@@ -137,7 +159,14 @@ public class Autonomo4 extends LinearOpMode {
         try {
             configurarHardware();
             boolean imuInicializado = configurarImu();
-            configurarVisao();
+            boolean configuracaoValida = validarConfiguracao();
+
+            if (configuracaoValida) {
+                configurarVisao();
+            } else {
+                estadoVisao = "Nao iniciada: configuracao invalida";
+            }
+
             reiniciarEncoders();
 
             telemetry.addLine("Meca Tiger - Autonomo 4.0");
@@ -151,6 +180,11 @@ public class Autonomo4 extends LinearOpMode {
             waitForStart();
 
             if (isStopRequested()) {
+                return;
+            }
+
+            if (!configuracaoValida) {
+                mostrarFalha();
                 return;
             }
 
@@ -203,10 +237,77 @@ public class Autonomo4 extends LinearOpMode {
             telemetry.addData("Encoder ME", ME.getCurrentPosition());
             telemetry.update();
 
+        } catch (RuntimeException e) {
+            etapaAtual = "Excecao inesperada";
+            motivoFalha = "Falha de runtime: "
+                    + e.getClass().getSimpleName();
+            mostrarFalha();
         } finally {
             pararTudo();
             fecharVisao();
         }
+    }
+
+    private boolean validarConfiguracao() {
+        etapaAtual = "Validacao de configuracao";
+
+        if (!Double.isFinite(TICKS_POR_MM) || TICKS_POR_MM <= 0.0) {
+            motivoFalha = "TICKS_POR_MM invalido";
+            return false;
+        }
+
+        if (TICKS_POR_REV_MOTOR <= 0.0
+                || REDUCAO_CARTUCHO_4_PARA_1 <= 0.0
+                || REDUCAO_CARTUCHO_5_PARA_1 <= 0.0
+                || DIAMETRO_RODA_MM <= 0.0
+                || FATOR_CALIBRACAO_DISTANCIA <= 0.0) {
+            motivoFalha = "Parametros mecanicos invalidos";
+            return false;
+        }
+
+        if (Math.abs(ANGULO_COLETA) > 180.0
+                || Math.abs(ANGULO_LANCAMENTO) > 180.0
+                || DISTANCIA_COLETA_MM <= 0.0
+                || VELOCIDADE_COLETA < MIN_POTENCIA_DESLOCAMENTO
+                || VELOCIDADE_COLETA > 1.0) {
+            motivoFalha = "Parametros da estrategia invalidos";
+            return false;
+        }
+
+        if (MIN_POTENCIA_VIRADA <= 0.0
+                || MIN_POTENCIA_VIRADA > MAX_POTENCIA_VIRADA
+                || MIN_POTENCIA_ALINHAMENTO <= 0.0
+                || MIN_POTENCIA_ALINHAMENTO > MAX_POTENCIA_ALINHAMENTO
+                || MAX_CORRECAO_ENCODER > MAX_CORRECAO_TOTAL) {
+            motivoFalha = "Limites de controle invalidos";
+            return false;
+        }
+
+        if (CAMERA_LARGURA <= 0
+                || CAMERA_ALTURA <= 0
+                || DECIMACAO_APRILTAG <= 0) {
+            motivoFalha = "Parametros da camera invalidos";
+            return false;
+        }
+
+        if (!ehClusterBiobuzz(clusterAlvoDaEstrategia())) {
+            motivoFalha = "Cluster da estrategia invalido";
+            return false;
+        }
+
+        double tempoLancamento =
+                calcularTempoLancamento(QUANTIDADE_LANCAMENTOS);
+
+        if (QUANTIDADE_LANCAMENTOS <= 0
+                || tempoLancamento + RESERVA_SEGURANCA
+                >= TEMPO_MAXIMO_AUTO) {
+            motivoFalha = "Orcamento de tempo do lancamento invalido";
+            return false;
+        }
+
+        motivoFalha = "";
+        etapaAtual = "Inicializacao";
+        return true;
     }
 
     private void configurarHardware() {
@@ -237,13 +338,20 @@ public class Autonomo4 extends LinearOpMode {
     }
 
     private boolean configurarImu() {
-        RevHubOrientationOnRobot orientacao =
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
-                );
+        try {
+            RevHubOrientationOnRobot orientacao =
+                    new RevHubOrientationOnRobot(
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.UP
+                    );
 
-        return imu.initialize(new IMU.Parameters(orientacao));
+            return imu.initialize(new IMU.Parameters(orientacao));
+
+        } catch (RuntimeException e) {
+            motivoFalha = "Falha ao inicializar IMU: "
+                    + e.getClass().getSimpleName();
+            return false;
+        }
     }
 
     private void configurarVisao() {
@@ -257,6 +365,8 @@ public class Autonomo4 extends LinearOpMode {
 
             visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, NOME_WEBCAM))
+                    .setCameraResolution(
+                            new Size(CAMERA_LARGURA, CAMERA_ALTURA))
                     .addProcessor(aprilTag)
                     .build();
 
@@ -267,6 +377,22 @@ public class Autonomo4 extends LinearOpMode {
             visaoDisponivel = false;
             estadoVisao = "Indisponivel: " + e.getClass().getSimpleName();
             fecharVisao();
+        }
+    }
+
+    private boolean cameraEstaStreaming() {
+        if (visionPortal == null) {
+            return false;
+        }
+
+        try {
+            return visionPortal.getCameraState()
+                    == VisionPortal.CameraState.STREAMING;
+        } catch (RuntimeException e) {
+            estadoVisao = "Erro consultando camera: "
+                    + e.getClass().getSimpleName();
+            visaoDisponivel = false;
+            return false;
         }
     }
 
@@ -512,19 +638,29 @@ public class Autonomo4 extends LinearOpMode {
 
             double erroRumo = normalizarAngulo(rumoAlvo - rumoAtual);
 
-            if (mediaTicks >= alvoTicks - TOLERANCIA_DISTANCIA_TICKS
-                    && Math.abs(diferencaTicks)
-                    <= TOLERANCIA_DIFERENCA_TICKS
-                    && Math.abs(erroRumo)
-                    <= TOLERANCIA_RUMO_DESLOCAMENTO) {
+            if (mediaTicks >= alvoTicks - TOLERANCIA_DISTANCIA_TICKS) {
                 pararTracao();
-                return true;
-            }
 
-            if (mediaTicks > alvoTicks + LIMITE_ULTRAPASSAGEM_TICKS) {
-                motivoFalha = "Passou do alvo sem equilibrar encoders/rumo";
-                pararTracao();
-                return false;
+                if (Math.abs(erroRumo)
+                        <= TOLERANCIA_RUMO_DESLOCAMENTO) {
+                    return true;
+                }
+
+                // A distancia do centro do robo e dada pela media das rodas.
+                // Depois de atingir o alvo linear, nao continue avancando apenas
+                // para igualar encoders: corrija o rumo girando no proprio eixo.
+                boolean rumoCorrigido = virarParaRumo(
+                        rumoAlvo,
+                        TEMPO_CORRECAO_FINAL_RUMO
+                );
+
+                if (!rumoCorrigido
+                        && "Tempo limite da virada".equals(motivoFalha)) {
+                    motivoFalha =
+                            "Distancia atingida; correcao final de rumo excedeu o tempo";
+                }
+
+                return rumoCorrigido;
             }
 
             if (ticksMD >= ultimoProgressoMD + PROGRESSO_MINIMO_TICKS) {
@@ -617,6 +753,7 @@ public class Autonomo4 extends LinearOpMode {
                 telemetry.addData("Alvo / restante", "%d / %.1f mm",
                         alvoTicks, restantes / TICKS_POR_MM);
                 telemetry.addData("Erro rumo", "%.2f", erroRumo);
+                telemetry.addData("Diferenca ticks", "%d", diferencaTicks);
                 telemetry.addData("Correcao", "%.3f", correcao);
                 telemetry.addData("Potencia MD / ME", "%.2f / %.2f",
                         potenciaMD, potenciaME);
@@ -665,7 +802,7 @@ public class Autonomo4 extends LinearOpMode {
             return true;
         }
 
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+        if (!cameraEstaStreaming()) {
             estadoVisao = "Fallback IMU: camera nao esta STREAMING";
             return true;
         }
@@ -760,7 +897,11 @@ public class Autonomo4 extends LinearOpMode {
             visaoUsada = true;
             movimentoIniciado = true;
 
-            if (Math.abs(alvo.bearing) <= TOLERANCIA_BEARING_GRAUS) {
+            double erroBearing = normalizarAngulo(
+                    alvo.bearing - OFFSET_BEARING_CAMERA_GRAUS
+            );
+
+            if (Math.abs(erroBearing) <= TOLERANCIA_BEARING_GRAUS) {
                 pararTracao();
 
                 if (inicioEstavel < 0.0) {
@@ -778,7 +919,7 @@ public class Autonomo4 extends LinearOpMode {
                 inicioEstavel = -1.0;
 
                 double comando = limitar(
-                        KP_ALINHAMENTO_VISAO * alvo.bearing,
+                        KP_ALINHAMENTO_VISAO * erroBearing,
                         -MAX_POTENCIA_ALINHAMENTO,
                         MAX_POTENCIA_ALINHAMENTO
                 );
@@ -786,7 +927,7 @@ public class Autonomo4 extends LinearOpMode {
                 if (Math.abs(comando) < MIN_POTENCIA_ALINHAMENTO) {
                     comando = Math.copySign(
                             MIN_POTENCIA_ALINHAMENTO,
-                            alvo.bearing
+                            erroBearing
                     );
                 }
 
@@ -798,7 +939,8 @@ public class Autonomo4 extends LinearOpMode {
                 telemetry.addData("Visao", alvo.tipo);
                 telemetry.addData("Alvo", alvo.nome);
                 telemetry.addData("Range", "%.1f in", alvo.range);
-                telemetry.addData("Bearing", "%.2f deg", alvo.bearing);
+                telemetry.addData("Bearing bruto", "%.2f deg", alvo.bearing);
+                telemetry.addData("Erro bearing", "%.2f deg", erroBearing);
                 telemetry.addData("Yaw alvo", "%.2f deg", alvo.yaw);
                 telemetry.update();
                 telemetriaTimer.reset();
@@ -1049,15 +1191,19 @@ public class Autonomo4 extends LinearOpMode {
     }
 
     private double normalizarAngulo(double graus) {
-        while (graus > 180.0) {
-            graus -= 360.0;
+        if (!Double.isFinite(graus)) {
+            return Double.NaN;
         }
 
-        while (graus < -180.0) {
-            graus += 360.0;
+        double normalizado = graus % 360.0;
+
+        if (normalizado > 180.0) {
+            normalizado -= 360.0;
+        } else if (normalizado < -180.0) {
+            normalizado += 360.0;
         }
 
-        return graus;
+        return normalizado;
     }
 
     private double limitar(double valor, double minimo, double maximo) {
