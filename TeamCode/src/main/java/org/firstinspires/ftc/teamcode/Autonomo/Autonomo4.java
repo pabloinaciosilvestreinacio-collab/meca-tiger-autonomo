@@ -237,6 +237,11 @@ public class Autonomo4 extends LinearOpMode {
             telemetry.addData("Encoder ME", ME.getCurrentPosition());
             telemetry.update();
 
+        } catch (RuntimeException e) {
+            etapaAtual = "Excecao inesperada";
+            motivoFalha = "Falha de runtime: "
+                    + e.getClass().getSimpleName();
+            mostrarFalha();
         } finally {
             pararTudo();
             fecharVisao();
@@ -333,13 +338,20 @@ public class Autonomo4 extends LinearOpMode {
     }
 
     private boolean configurarImu() {
-        RevHubOrientationOnRobot orientacao =
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
-                );
+        try {
+            RevHubOrientationOnRobot orientacao =
+                    new RevHubOrientationOnRobot(
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.UP
+                    );
 
-        return imu.initialize(new IMU.Parameters(orientacao));
+            return imu.initialize(new IMU.Parameters(orientacao));
+
+        } catch (RuntimeException e) {
+            motivoFalha = "Falha ao inicializar IMU: "
+                    + e.getClass().getSimpleName();
+            return false;
+        }
     }
 
     private void configurarVisao() {
@@ -365,6 +377,22 @@ public class Autonomo4 extends LinearOpMode {
             visaoDisponivel = false;
             estadoVisao = "Indisponivel: " + e.getClass().getSimpleName();
             fecharVisao();
+        }
+    }
+
+    private boolean cameraEstaStreaming() {
+        if (visionPortal == null) {
+            return false;
+        }
+
+        try {
+            return visionPortal.getCameraState()
+                    == VisionPortal.CameraState.STREAMING;
+        } catch (RuntimeException e) {
+            estadoVisao = "Erro consultando camera: "
+                    + e.getClass().getSimpleName();
+            visaoDisponivel = false;
+            return false;
         }
     }
 
@@ -774,7 +802,7 @@ public class Autonomo4 extends LinearOpMode {
             return true;
         }
 
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+        if (!cameraEstaStreaming()) {
             estadoVisao = "Fallback IMU: camera nao esta STREAMING";
             return true;
         }
