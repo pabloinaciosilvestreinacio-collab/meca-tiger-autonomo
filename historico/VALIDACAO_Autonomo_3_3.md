@@ -34,3 +34,7 @@ Preserva a estratégia original da 3.1 e da 3.2: virar **-50°**, registrar o ru
 
 ## Reversão
 Manter `Autonomo32.java` e `autonomo.java` intactos e selecionar a OpMode anterior no Driver Station. Não exige rollback de outros arquivos.
+
+
+### Atualização de validação CI — 12/10/2026
+**Compilação FTC real aprovada:** GitHub Actions [run #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443), `compileDebugJavaWithJavac` e `assembleDebug` com `BUILD SUCCESSFUL in 2m 16s`. Teste Node: 21 assertions e 5.000 cenários; auditoria: 58 verificações. **Não representa teste físico**. Ver `historico/RELATORIO_CI_SEM_CAMERA_3X.md`.
