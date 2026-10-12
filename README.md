@@ -1,5 +1,22 @@
 # Meca Tiger - Autonomo FTC
 
+## Linha 3.x — Autonomo SEM camera
+
+**Versao candidata mais recente: Autonomo 3.4 - Testes (na branch de desenvolvimento).**
+
+- `autonomo.java` = 3.1 de referencia, intacta.
+- `Autonomo32.java` = 3.2, ja existente na main, sem camera.
+- `Autonomo33.java` = 3.3, com limites adicionais de seguranca, diagnostico e orcamento de tempo.
+- `Autonomo34.java` = 3.4, com B = teste de giro (+20 e -20), X = teste de avanco (350 mm), Y = sequencia completa; **A confirma** no INIT.
+- As quatro versoes continuam separadas, com backups em `historico/`.
+- **Manual operacional:** [GUIA_AUTONOMO_SEM_CAMERA.md](GUIA_AUTONOMO_SEM_CAMERA.md).
+- **Historico de testes:** `historico/VALIDACAO_Autonomo_3_3.md` e `historico/VALIDACAO_Autonomo_3_4.md`.
+- **Teste reproduzivel:** `node tests/autonomo_sem_camera_3x.mjs` e `node tests/auditoria_autonomo_3x.mjs`.
+- **FTC SDK build:** workflow `.github/workflows/ftc-sem-camera.yml`. Compilacao e hardware **nao confirmados** ate haver evidencia.
+
+A linha 3.x e independente da 4.x/5.x, que utiliza camera. Nenhum arquivo original foi sobrescrito.
+
+
 ## Autonomo 3.2 (sem camera) — candidato para testes
 
 A versão sem câmera foi criada em `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo32.java`. O arquivo original `autonomo.java` continua sendo a 3.1 intacta. Nenhuma funcionalidade de visão integra o 3.2.
