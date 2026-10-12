@@ -1,5 +1,16 @@
 # Meca Tiger - Autonomo FTC
 
+## Autonomo 3.2 (sem camera) — candidato para testes
+
+A versão sem câmera foi criada em `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo32.java`. O arquivo original `autonomo.java` continua sendo a 3.1 intacta. Nenhuma funcionalidade de visão integra o 3.2.
+
+Mantem giro -50°, avança 2000 mm coletando, gira +100° e tenta lançar 3 peças. Corrige condição de parada por encoder, continuidade angular do PID, watchdog de giro e reserva de tempo. Todos os resultados até aqui são testes estáticos, matemáticos e simulações sintéticas; `20:1`, IMU e ganhos de PID aguardam medição real.
+
+- Historico: `historico/Autonomo_3_2.txt`
+- Validacao detalhada: `historico/VALIDACAO_Autonomo_3_2.md`
+- Testes: `node tests/autonomo32_logic_tests.mjs` e `node tests/autonomo32_travel_model.mjs`
+- Workflow de compilacao: `.github/workflows/autonomo32-validation.yml` (resultado ainda pendente).
+
 ## Candidato mais novo: Autonomo 5.1 (branch de revisao)
 
 - Arquivo: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo51.java`
