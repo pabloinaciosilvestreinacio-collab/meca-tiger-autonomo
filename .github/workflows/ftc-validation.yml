@@ -3,6 +3,7 @@ name: FTC autonomous validation
 on:
   push:
     branches:
+      - main
       - revisao/autonomo-4.1-validacao
   workflow_dispatch:
 
