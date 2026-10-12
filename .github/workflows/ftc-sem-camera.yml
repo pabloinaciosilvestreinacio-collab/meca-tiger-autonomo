@@ -21,7 +21,9 @@ jobs:
         with:
           node-version: '22'
       - name: Simulacao PID, encoders e watchdog
-        run: node tests/autonomo_sem_camera_3x.mjs
+        run: |
+          node tests/autonomo_sem_camera_3x.mjs
+          node tests/auditoria_autonomo_3x.mjs
       - name: Impedir dependencias de visao nas classes 3.x
         run: |
           if grep -nE 'AprilTag|VisionPortal|WebcamName|\.vision\.' TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo3{2,3,4}.java; then
