@@ -6,6 +6,8 @@ import crypto from "node:crypto";
 const report = fs.readFileSync("RELATORIO_GERAL_VALIDACAO_SOFTWARE.md", "utf8");
 const manual = fs.readFileSync("MANUAL_GERAL_CALIBRACAO_TESTES.md", "utf8");
 const readme = fs.readFileSync("README.md", "utf8");
+const dossier = fs.readFileSync("DOSSIER_TECNICO_COMPLETO_AUTONOMO.md", "utf8");
+const index = fs.readFileSync("INDICE_COMPLETO_CODIGOS_AUTONOMO.md", "utf8");
 const versions = [
   ["2", "historico/Autonomo_2.txt", null, "65072b9b18a42438df625deca4722596126b006d"],
   ["3", "historico/Autonomo_3.txt", null, "91c6d4ebadcf974df24bd5a9eafeaf502c0c2bba"],
@@ -31,6 +33,8 @@ for (const [version, history, source, hash] of versions) {
   const h = fs.readFileSync(history);
   verify(blobHash(h) === hash, version + " history hash mismatch");
   verify(report.includes(hash), version + " SHA absent from report");
+  verify(index.includes(hash), version + " SHA absent from code index");
+  verify(dossier.includes(history), version + " history not linked in dossier");
   verify(report.includes("| " + version + " |") ||
          report.includes("| **" + version + "** |"), version + " row absent");
   if(source) {
@@ -43,11 +47,13 @@ for (const doc of [
   "MANUAL_GERAL_CALIBRACAO_TESTES.md",
   "RELATORIO_GERAL_VALIDACAO_SOFTWARE.md",
   "MODELO_REGISTRO_ENSAIO_AUTONOMO.md",
-  "GUIA_AUTONOMO_SEM_CAMERA.md"
+  "GUIA_AUTONOMO_SEM_CAMERA.md",
+  "DOSSIER_TECNICO_COMPLETO_AUTONOMO.md",
+  "INDICE_COMPLETO_CODIGOS_AUTONOMO.md"
 ]) {
   verify(readme.includes(doc), doc + " not indexed by README");
 }
-for(const file of ["README.md","MANUAL_GERAL_CALIBRACAO_TESTES.md","RELATORIO_GERAL_VALIDACAO_SOFTWARE.md"]) {
+for(const file of ["README.md","MANUAL_GERAL_CALIBRACAO_TESTES.md","RELATORIO_GERAL_VALIDACAO_SOFTWARE.md","DOSSIER_TECNICO_COMPLETO_AUTONOMO.md","INDICE_COMPLETO_CODIGOS_AUTONOMO.md"]) {
   const data=fs.readFileSync(file,"utf8");
   const rx=/\]\(([^)]+)\)/g;
   for(const m of data.matchAll(rx)) {
@@ -58,6 +64,12 @@ for(const file of ["README.md","MANUAL_GERAL_CALIBRACAO_TESTES.md","RELATORIO_GE
   }
 }
 verify(manual.includes("3.5") && manual.includes("5.1"), "both families required");
+verify(dossier.includes("ControladorPID.calcular") && dossier.includes("getFreshDetections()"),
+  "dossier must describe Java PID and fresh camera detections");
+verify(dossier.includes("3.5 sem câmera vs. 5.1 com câmera"),
+  "dossier must explain physical comparison");
+verify(dossier.includes("P0 — Bloqueios antes de competir"),
+  "dossier must retain outstanding risks");
 verify(report.includes("BUILD SUCCESSFUL"), "build evidence missing");
 verify(report.includes("Sem registro vinculado") && report.includes("Nenhuma versão foi homologada fisicamente"),
   "non-validated physical results must remain explicitly stated");
