@@ -30,7 +30,7 @@ O projeto tem duas metas: permitir que a equipe continue programando com seguran
 | Autônomo **sem câmera** | 3.1–3.5; candidata `Autonomo35.java` | Compilação FTC confirmada; calibração física pendente |
 | Autônomo **com câmera** | 4.0–4.2, 5.0–5.1; candidata `Autonomo51.java` | Compilação FTC confirmada; C270 e mira física pendentes |
 | TeleOp **manual** | 1.0–1.1; classe `TeleOp11.java` | Compilação FTC confirmada; sinais físicos pendentes |
-| TeleOp **IMU + mecanismos** | 1.2–1.3; `TeleOp12.java`/`TeleOp13.java` | **Experimental**: depende de CI e ensaios físicos |
+| TeleOp **IMU + mecanismos** | 1.2–1.3; `TeleOp12.java`/`TeleOp13.java` | **SDK v12.0 compilado**; experimental, ensaios físicos pendentes |
 
 **O que “compilado” significa:** as classes Java foram aceitas pelo projeto FTC SDK utilizado no GitHub Actions. **Não equivale a testes em pista ou prova de pontuação.** Veja a [matriz de evidências](docs/TESTES.md). O projeto preserva as simulações e os testes matemáticos, sem apresentá-los como medições reais.
 
@@ -79,7 +79,7 @@ node tests/teleop_12_13_logic.mjs
 node tests/repositorio_integridade.mjs
 ```
 
-O workflow [FTC projeto integrado](.github/workflows/ftc-projeto.yml) compila os arquivos com o **SDK v12.0 fixado por tag** e executa testes disponíveis. Consulte os jobs/logs e o [relatório de integração](docs/RELATORIO_REORGANIZACAO.md) para resultados do commit exato, não apenas badges.
+O workflow [FTC projeto integrado](.github/workflows/ftc-projeto.yml) compila os arquivos com o **SDK v12.0 fixado por tag** e executa testes disponíveis. **Último build comprovado dessas classes: [Actions #38334743988](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38334743988), 2/2 jobs SUCCESS, BUILD SUCCESSFUL.** Consulte os jobs/logs e o [relatório de integração](docs/RELATORIO_REORGANIZACAO.md) para resultados do commit exato, não apenas badges.
 
 ## Segurança, publicabilidade e licença
 
