@@ -12,7 +12,7 @@
 - Implementações solicitadas devem ocorrer preferencialmente em **branch isolada**, com documentação das alterações, scripts de teste e PR de revisão.
 - **Não forçar push, apagar históricos, modificar visibilidade, definir licença ou realizar operações destrutivas sem aprovação específica.** Não declarar release físico sem ensaio.
 - Não acionar motores/intake/lançador reais sem supervisão, plano seguro, área livre e STOP acessível.
-- Nunca afirmar que um build FTC provou precisão de moto​​res, yaw, câmera, lançador ou pontuação real.
+- Nunca afirmar que um build FTC provou precisão de motores, yaw, câmera, lançador ou pontuação real.
 
 ## Mecânica, APIs e sinais
 - Tração diferencial de dois motores MD (direito), ME (esquerdo), não mecanum. MI é intake/alimentação e MS lançador. IMU é `imu`. As classes com visão usam Logitech C270 `Webcam 1`.
