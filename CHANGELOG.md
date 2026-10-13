@@ -1,5 +1,19 @@
 # Historico de alteracoes
 
+## 12–13/10/2026 — Reorganização integrada do repositório e TeleOp 1.2–1.3
+
+**Objetivo:** projeto mais intuitivo e preparado para revisão pública futura, sem apagar históricos.
+
+- **README** refeito em português; banner SVG original em grafite/laranja; portal `docs/README.md` e mapa da arquitetura; links para os manuais do autônomo e TeleOp.
+- **Históricos integrados:** autônomo 2–5.1 (com e sem câmera) e TeleOp 1.0/1.1, preservados com fontes e backups idênticos.
+- **TeleOp 1.2** (classe nova): preserva o chassi manual da 1.1, integra IMU e BACK como correção **proporcional** de rumo enquanto há translação; requer seleção e confirmação da polaridade do yaw no INIT (D-pad ESQ/DIR + A). Sem IMU válido, sem confirmação ou com erro de rumo maior que 12°, a assistência não atua.
+- **TeleOp 1.3** (classe nova): integra MI/MS sob gamepad2 com intertravamento inicial desarmado, **Y arma**, **X desarma**, **LB intake**, **B reversão que desliga MS**, **RB MS enquanto pressionado**, **A alimenta apenas após aquecimento de RB por 0,80 s**. STOP zera MD/ME/MI/MS, sem garantir parada mecânica instantânea do MS em FLOAT.
+- **Manual de gamepads** com desenho vetorial editável `assets/teleop-gamepads.svg`; mapeamentos novos explicitamente experimentais até validação física e aprovação dos pilotos.
+- **Engenharia reprodutível:** scripts `tests/teleop_12_13_logic.mjs` e `tests/repositorio_integridade.mjs`; workflow `.github/workflows/ftc-projeto.yml` para build das classes em FTC SDK **v12.0** e regressão das duas linhas.
+- **Publicabilidade:** CONTRIBUTING, SECURITY, modelos para issues/PRs, .gitignore, .gitattributes e checklist `docs/PUBLICACAO.md`. Repositório ainda privado, sem licença escolhida pela equipe e sem publicização automática.
+- **Ajustes encontrados na revisão:** corrigido simulador que perdia campos do gamepad, corrigida detecção de texto na auditoria estática, checado retorno booleano de `IMU.initialize()` e impedido MS ligado durante reversão MI. Todas as correções foram registradas em commits separados.
+- **Validação física:** nenhuma execução desta linha TeleOp 1.2/1.3 no Control Hub; sinais, transmissão e mecanismos ainda precisam de testes seguros. O resultado final dos jobs de GitHub Actions deve ser registrado no `docs/RELATORIO_REORGANIZACAO.md` após conclusão.
+
 ## 12/10/2026 — Dossiê integral de toda a programação FTC (documentação)
 
 - Criado **DOSSIER_TECNICO_COMPLETO_AUTONOMO.md** (~600 linhas): histórico técnico de todas as 12 versões (2–5.1), justificativas de cada melhoria, arquitetura do Java, runOpMode, tarefas, PID manual, encoder, IMU, lançamento, câmera C270, AprilTag Clusters, fallback e orçamentos.
