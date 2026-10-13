@@ -90,9 +90,13 @@ Na 1.1 os dois comandos são divididos pelo mesmo divisor `max(1, |MD|, |ME|)`, 
 
 **Teste lógico reproduzível:** `node tests/teleop_1x_logic.mjs`, que modela somente matemática de joysticks/potências e rampas — não roda FTC SDK ou robô.
 
-**Build real:** CI `.github/workflows/ftc-teleop.yml` clona FTC SDK oficial, copia apenas `TeleOp10.java` e `TeleOp11.java` e executa `./gradlew :TeamCode:assembleDebug`. Conferir status **antes de registrar como aprovado**.
+**Build real:** CI `.github/workflows/ftc-teleop.yml` clona FTC SDK oficial, copia apenas `TeleOp10.java` e `TeleOp11.java` e executa `./gradlew :TeamCode:assembleDebug`. **Build aprovado no [run #38327706268](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38327706268): TeamCode:assembleDebug = BUILD SUCCESSFUL in 1m 46s.** As duas classes compilam no SDK oficial utilizado no CI, mas ainda não foram testadas no robô real.
 
 **Documentação oficial de referência:** [FTC — Creating and Running an OpMode](https://ftc-docs.firstinspires.org/en/latest/programming_resources/tutorial_specific/android_studio/creating_op_modes/Creating-and-Running-an-Op-Mode-%28Android-Studio%29.html), [FTC — Motor Modes](https://ftc-docs.firstinspires.org/en/latest/tech_tips/tech-tips/tech-tip-motor-modes/tech-tip-motor-modes.html).
+
+### Análise matemática da assistência IMU
+
+Veja também o [estudo da próxima versão IMU 1.2](ESTUDO_ASSISTENCIA_IMU.md). A fórmula atual cria um **eixo virtual de giro pela soma dos comandos de motores**. Injetar uma correção com sinais opostos modifica o outro eixo virtual, o que pode explicar o problema anterior de movimento linear indesejado.
 
 ## 7. Ficha mínima por teste
 
