@@ -1,0 +1,57 @@
+name: FTC TeleOp 1.x - validacao
+
+on:
+  push:
+    branches: [desenvolvimento/teleop-1x]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/**'
+      - 'tests/teleop_1x_logic.mjs'
+      - '.github/workflows/ftc-teleop.yml'
+  workflow_dispatch:
+
+jobs:
+  logica:
+    name: TeleOp - testes de comando
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testes sintéticos
+        run: node tests/teleop_1x_logic.mjs
+
+  compilacao:
+    name: TeleOp - FTC SDK compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Localizar Android SDK instalado no runner
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMGR="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -n "$SDKMGR"
+          echo "$(dirname "$SDKMGR")" >> "$GITHUB_PATH"
+      - name: Componentes Android
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-30" "platforms;android-35" "build-tools;35.0.0"
+      - name: Obter FTC SDK oficial
+        run: git clone --depth 1 https://github.com/FIRST-Tech-Challenge/FtcRobotController.git sdk
+      - name: Integrar somente versões TeleOp
+        run: |
+          mkdir -p sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/TeleOp10.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/TeleOp11.java sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/
+      - name: Compilar TeleOp no FTC SDK
+        working-directory: sdk
+        run: |
+          chmod +x gradlew
+          ./gradlew :TeamCode:assembleDebug --no-daemon --stacktrace
