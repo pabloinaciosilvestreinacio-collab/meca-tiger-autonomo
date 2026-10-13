@@ -54,7 +54,7 @@ Esses números são da **execução de uma implementação matemática JavaScrip
 
 ### Compilação FTC
 
-Workflow configurado `.github/workflows/ftc-teleop.yml` com `TeamCode:assembleDebug`, clonando a distribuição oficial FTC. **Estado: pendente de resultado observado no GitHub Actions**; não afirmar compilação real só por revisão estática.
+Workflow configurado `.github/workflows/ftc-teleop.yml` com `TeamCode:assembleDebug`, clonando a distribuição oficial FTC. **APROVADO no [GitHub Actions run #38327706268](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38327706268)**. O job copiou `TeleOp10.java` e `TeleOp11.java` para o projeto FTC SDK oficial e concluiu `TeamCode:compileDebugJavaWithJavac`, `TeamCode:assembleDebug`, com **BUILD SUCCESSFUL in 1m 46s** (12/10/2026 no horário de Brasília; logs em UTC). O job de testes de lógica do mesmo run terminou com **SUCCESS**, exibindo 105.049 assertions e 25.000 frames sintéticos; auditoria estática **25 verificações**. O primeiro run falhou apenas por um falso positivo no linter que detectava a palavra IMU dentro de texto de telemetria; o linter foi corrigido e reexecutado, com sucesso. Isso **não** valida sinais físicos, corrida real ou mecanismos.
 
 ### Ensaios físicos
 
