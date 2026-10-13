@@ -83,3 +83,18 @@ O código TeleOp `robo` instalado anteriormente na escola não estava presente n
 - As classes antigas do autônomo não são alteradas nesta branch; a publicação na `main` deve ocorrer somente após revisão do diff e estado CI.
 
 **Resumo:** reorganização de documentação + nova linha TeleOp experimentais, com segurança priorizada, provas de software discriminadas e checklist explícito para utilização física e publicação futura.
+
+
+## 8. Evidência de validação integrada — FTC SDK v12.0 (13/10/2026 UTC)
+
+**EXECUÇÃO COMPROVADA:** [GitHub Actions #38334743988](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38334743988) — **2/2 jobs SUCCESS**.
+
+- Job **FTC SDK v12.0 — todas as classes Java**: compilou autônomos, TeleOp 1.0–1.3 e diagnósticos no projeto FTC oficial tag v12.0; registrou `TeamCode:compileDebugJavaWithJavac`, `TeamCode:assembleDebug` e **BUILD SUCCESSFUL in 2m 30s**.
+- Job **Logica, documentacao e seguranca**: regressões matemáticas autônomo, PID/AprilTag sintético, TeleOp, backup e navegação — todos os scripts terminaram com sucesso.
+- `tests/teleop_12_13_logic.mjs`: **257.629 assertions**, **132.000 quadros sintéticos de heading** e **25.000 quadros sintéticos de MI/MS**; os sinais reais, corrente, atrito e latência não estão representados.
+- `tests/repositorio_integridade.mjs`: **14 pares Java/snapshot**, **493 verificações** de fontes/arquivos/links e padrões evidentes de segredo em textos atuais.
+- `tests/auditoria_documentacao_geral.mjs`: **235 verificações** dos documentos de versões/autônomo.
+- **Integridade do Java compilado:** `TeleOp12.java` blob `231f53a86b8e7ce818b5469c4aa86be6e200f196`; `TeleOp13.java` blob `a83a8a82d38f8b364d8729a1496de873db84dec7`. Ambos foram conferidos **idênticos ao código atual da branch**.
+- O workflow não faz upload do APK para o Control Hub, não mede sinais físicos, FPS, RPM ou pontuação. **Nenhum TeleOp desta linha foi homologado fisicamente**.
+
+Ver [manual completo do TeleOp](../teleop/MANUAL_COMPLETO.md) e [matriz de evidências](TESTES.md). A futura publicação pública ainda exige revisão humana de histórico Git, segredos e licença.
