@@ -45,6 +45,15 @@
 - Pipeline conjunta `.github/workflows/ftc-projeto.yml` compila todas as classes contra tag oficial **v12.0** do FTC SDK com `TeamCode:assembleDebug` e roda modelos Node.
 - **O modelo JS não executa o Java nem controla o robô.** Confirmar resultados do workflow por commit, no GitHub Actions. Não atribuir taxa de sucesso física a amostras artificiais.
 
+### Resultado de compilação FTC e testes sintéticos (13/10/2026 UTC)
+
+[GitHub Actions #38334743988](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38334743988) **2/2 jobs aprovados**. Todos os Java do Autônomo e TeleOp compilaram juntos com tag FTC SDK **v12.0**; `TeamCode:compileDebugJavaWithJavac` e `TeamCode:assembleDebug`, **BUILD SUCCESSFUL in 2m 30s**.
+
+- Controle de heading P e mecanismos: **257.629 assertions**, 132.000 amostras matemáticas de yaw e 25.000 de MI/MS, tudo sintético.
+- Integridade: **14 pares de Java/snapshot e 493 verificações**.
+- Os blobs das classes Java compiladas são idênticos aos atuais: 1.2 `231f53a86b8e7ce818b5469c4aa86be6e200f196`; 1.3 `a83a8a82d38f8b364d8729a1496de873db84dec7`.
+- **Não houve execução no robô**, tampouco medida real de sinais, RPM e velocidade.
+
 ## 4. Testes reais ainda obrigatórios
 
 1. Confirmar `MD`, `ME`, `MI`, `MS`, `imu` no Driver Station; conferir yaw sem motor.
