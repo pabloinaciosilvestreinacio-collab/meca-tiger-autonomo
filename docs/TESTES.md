@@ -18,7 +18,7 @@
 - Autônomo 3.1–3.5: [build #38319766443](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38319766443) aprovado.
 - Autônomo 3.1–5.1 com câmera: [build integrado #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887) aprovado.
 - TeleOp 1.0/1.1: [build #38327706268](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38327706268) aprovado, **105.049 assertions sintéticas**, 25.000 amostras e 25 verificações estáticas.
-- TeleOp 1.2/1.3: código experimental; o [workflow integrado](../.github/workflows/ftc-projeto.yml) é a fonte de verdade para resultados novos. Não alegar build/ensaios sem run bem-sucedido.
+- TeleOp 1.2/1.3: **compilação FTC SDK v12.0 APROVADA** no [run #38334743988](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38334743988) com `:TeamCode:assembleDebug` (**BUILD SUCCESSFUL in 2m 30s**). Testes JS da nova linha: **257.629 assertions / 132.000 quadros sintéticos de heading / 25.000 quadros sintéticos de mecanismos**; auditoria do repositório **14 versões / 493 verificações**. **Nenhum teste físico executado**.
 
 ## Como reproduzir localmente (Node.js 22)
 
