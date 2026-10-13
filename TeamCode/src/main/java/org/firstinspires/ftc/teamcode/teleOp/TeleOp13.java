@@ -217,11 +217,13 @@ public class TeleOp13 extends LinearOpMode {
                 x2Anterior = x2Atual;
                 y2Anterior = y2Atual;
 
-                if (!mecanismosArmados || !gamepad2.right_bumper) {
+                if (!mecanismosArmados || !gamepad2.right_bumper
+                        || gamepad2.b) {
                     tempoLancador.reset();
                 }
                 boolean lancadorLigado = mecanismosArmados
-                        && gamepad2.right_bumper;
+                        && gamepad2.right_bumper
+                        && !gamepad2.b;
                 boolean lancadorPronto = lancadorLigado
                         && tempoLancador.seconds() >= TEMPO_AQUECIMENTO_MS;
 
