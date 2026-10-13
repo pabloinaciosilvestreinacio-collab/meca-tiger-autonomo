@@ -15,6 +15,7 @@ O projeto tem duas metas: permitir que a equipe continue programando com seguran
 | Entender o projeto e a estrutura | **[Portal da documentação](docs/README.md)** |
 | Aprender todo o desenvolvimento do autônomo | [Dossiê técnico das versões 2–5.1](DOSSIER_TECNICO_COMPLETO_AUTONOMO.md) |
 | Consultar/calibrar o autônomo | [Manual geral de calibração](MANUAL_GERAL_CALIBRACAO_TESTES.md) |
+| Calibrar a linha 3.x **sem câmera** | [Guia específico do Autônomo 3.x](GUIA_AUTONOMO_SEM_CAMERA.md) |
 | Ver os **12 códigos originais** do autônomo | [Índice de fontes e históricos](INDICE_COMPLETO_CODIGOS_AUTONOMO.md) |
 | Pilotar, entender os botões e os mecanismos | **[Manual do TeleOp com desenho dos gamepads](teleop/MANUAL_COMPLETO.md)** |
 | Ver a validade de cada teste | [Relatório geral de validação](RELATORIO_GERAL_VALIDACAO_SOFTWARE.md) |
