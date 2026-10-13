@@ -72,7 +72,7 @@
 <circle cx="1241" cy="443" r="14" class="button"/><text x="1236" y="449" fill="#FFF" font-weight="bold" font-size="15">A</text>
 <text x="761" y="574" class="key">Y / X</text><text x="874" y="574" class="map">Armar / bloquear MI e MS</text>
 <text x="761" y="607" class="key">LB</text><text x="874" y="607" class="map">Intake MI (+60%) enquanto segura</text>
-<text x="761" y="640" class="key">B</text><text x="874" y="640" class="map">Reverso MI (−35%) enquanto segura</text>
+<text x="761" y="640" class="key">B</text><text x="874" y="640" class="map">Reverso MI −35% / MS desligado</text>
 <text x="761" y="673" class="key">RB</text><text x="874" y="673" class="map">Lançador MS (+70%) enquanto segura</text>
 <text x="761" y="706" class="key">A</text><text x="874" y="706" class="map">Alimenta MI após 0,8 s de MS</text>
 <text x="761" y="739" class="key">Analógicos</text><text x="874" y="739" class="map">Sem função nesta versão</text>
