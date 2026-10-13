@@ -38,4 +38,4 @@
 ## TeleOp v1.2/v1.3 — escopo adicional
 - A 1.2 pode inicializar `imu` e aplica correção de heading via botão BACK somente após seleção explícita do sinal de yaw. Sem calibração não há garantia de correção física.
 - A 1.3 mapeia MI e MS separadamente, com bloqueio em X, armamento em Y, comandos temporizados; teste de bancada necessário.
-- Consulte [manual ilustrado](../../../teleop/MANUAL_COMPLETO.md) e [arquitetura](../../../docs/ARQUITETURA.md). O nome original de classe `robo` usado na escola não foi recuperado da pasta auditada.
+- Consulte [manual ilustrado](../../../../teleop/MANUAL_COMPLETO.md) e [arquitetura](../../../../docs/ARQUITETURA.md). O nome original de classe `robo` usado na escola não foi recuperado da pasta auditada.
