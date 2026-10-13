@@ -126,11 +126,17 @@ public class TeleOp11 extends LinearOpMode {
 
     private static double aplicarRampa(
             double atual, double alvo, double dt) {
-        double taxa = Math.abs(alvo) > Math.abs(atual)
-                && Math.signum(atual) == Math.signum(alvo)
+        boolean invertendo = atual != 0.0 && alvo != 0.0
+                && Math.signum(atual) != Math.signum(alvo);
+        double destino = invertendo ? 0.0 : alvo;
+
+        boolean acelerando = (atual == 0.0 && destino != 0.0)
+                || (Math.signum(atual) == Math.signum(destino)
+                        && Math.abs(destino) > Math.abs(atual));
+        double taxa = acelerando
                 ? RAMPA_ACELERACAO : RAMPA_FRENAGEM;
 
         double passo = taxa * Range.clip(dt, 0.0, 0.10);
-        return Range.clip(alvo, atual - passo, atual + passo);
+        return Range.clip(destino, atual - passo, atual + passo);
     }
 }
