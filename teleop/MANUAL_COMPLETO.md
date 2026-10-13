@@ -40,7 +40,7 @@ As quatro versões estão preservadas individualmente em [historico_teleop/](../
 1. Antes da partida, usar a 1.0 para confirmar o sinal de rotação causado por joystick direito X positivo; no INIT da 1.2/1.3, escolher D-pad correspondente e pressionar A.
 2. Com o robô em movimento para frente/trás, **segurar BACK**, mantendo o joystick direito centralizado; a referência angular é capturada **no momento de ativação**.
 3. O controle injeta correção no **mesmo canal X do giro**, em vez de usar potência diferencial incompatível com a mistura MD/ME existente.
-4. O piloto pode girar manualmente a qualquer momento: o comando do joystick direito prevalece; para manter o rumo novo, soltar e reativar BACK (ou recapturá-lo quando a assistê​​ncia recomeçar).
+4. O piloto pode girar manualmente a qualquer momento: o comando do joystick direito prevalece; para manter o rumo novo, soltar e reativar BACK (ou recapturá-lo quando a assistência recomeçar).
 5. Se o erro exceder 12°, a inicialização do IMU retornar falha ou houver leitura inválida, o assistente desativa a correção; em caso de erro grande fica bloqueado até soltar BACK. O piloto continua responsável por STOP.
 
 **Matemática empregada:** `erro = normalizar(rumoAlvo - yawAtual)`, `xCorrecao = clamp(sinalYaw * 0,012 * erro, -0,15, +0,15)`. A correção de potência passa pelas rampas normais. Não se trata de um PID completo: o **heading hold da 1.2/1.3 é P**, propositalmente conservador, e não o PID do autônomo.
