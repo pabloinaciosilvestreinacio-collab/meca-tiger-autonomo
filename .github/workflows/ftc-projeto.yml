@@ -3,11 +3,16 @@ name: FTC SDK 12.0 — Projeto completo
 on:
   push:
     branches:
+      - main
       - organizacao/repositorio-ftc-integrado
   pull_request:
     branches:
       - main
   workflow_dispatch:
+
+concurrency:
+  group: ftc-projeto-\${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   testes:
