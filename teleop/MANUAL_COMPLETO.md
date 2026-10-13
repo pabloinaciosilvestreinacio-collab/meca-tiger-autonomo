@@ -41,7 +41,7 @@ As quatro versões estão preservadas individualmente em [historico_teleop/](../
 2. Com o robô em movimento para frente/trás, **segurar BACK**, mantendo o joystick direito centralizado; a referência angular é capturada **no momento de ativação**.
 3. O controle injeta correção no **mesmo canal X do giro**, em vez de usar potência diferencial incompatível com a mistura MD/ME existente.
 4. O piloto pode girar manualmente a qualquer momento: o comando do joystick direito prevalece; para manter o rumo novo, soltar e reativar BACK (ou recapturá-lo quando a assistê​​ncia recomeçar).
-5. Se o erro exceder 12°, IMU ficar inválido, ou houver falha de leitura, o assistente desativa a correção; em caso de erro grande fica bloqueado até soltar BACK. O piloto continua responsável por STOP.
+5. Se o erro exceder 12°, a inicialização do IMU retornar falha ou houver leitura inválida, o assistente desativa a correção; em caso de erro grande fica bloqueado até soltar BACK. O piloto continua responsável por STOP.
 
 **Matemática empregada:** `erro = normalizar(rumoAlvo - yawAtual)`, `xCorrecao = clamp(sinalYaw * 0,012 * erro, -0,15, +0,15)`. A correção de potência passa pelas rampas normais. Não se trata de um PID completo: o **heading hold da 1.2/1.3 é P**, propositalmente conservador, e não o PID do autônomo.
 
@@ -54,12 +54,14 @@ O operador controla o **MI** (intake/alimentação) e o **MS** (lançador). Nada
 | **Y** (nova pressão) | **Arma MI/MS** | Só arma se LB, RB, A e B estiverem soltos; X não pode estar pressionado |
 | **X** (segurado ou pressionado) | **Bloqueia MI/MS imediatamente** | Prioridade máxima; mantém desarmado até novo Y |
 | **LB** (segurado) | MI no sentido de coleta, potência +0,60 | Apenas armado |
-| **B** (segurado) | MI reverso, potência −0,35 | Prevalece sobre LB e A para desobstrução, apenas armado |
+| **B** (segurado) | MI reverso, potência −0,35 | Prevalece sobre LB/A; **desliga MS mesmo que RB esteja segurado** e reinicia o aquecimento |
 | **RB** (segurado) | MS ligado a +0,70 | Ao soltar, MS para e seu tempo de aquecimento é zerado |
 | **A** (segurado) | MI alimenta a +0,60 | Só se RB mantém MS ligado **há 0,80 s** e mecanismos estão armados |
 | **Joystick e gatilhos** | Não utilizados | Mantidos livres para expansões documentadas |
 
 **Prioridade de MI:** desarmado/X → potência zero; B → reverso; A → alimentar **somente quando MS aqueceu**; LB → coleta; sem comando → MI zero.
+
+**Prioridade de MS:** desarmado/X ou B reverso → potência zero; RB → potência +0,70 enquanto pressionado. O motor MS está configurado para `FLOAT` quando recebe potência zero: **pode continuar girando por inércia**, portanto desligamento elétrico NÃO significa parada mecânica imediata. Aguardar parar totalmente antes de qualquer intervenção.
 
 **Importante:** 0,80 s é uma estimativa temporal, não um sensor de velocidade. O código **não mede RPM** de MS e **não conta peças disparadas**. Se o lançador não atingir velocidade útil em 0,80 s, o tempo precisa ser calibrado no robô ou substituído por feedback real em versão futura.
 
