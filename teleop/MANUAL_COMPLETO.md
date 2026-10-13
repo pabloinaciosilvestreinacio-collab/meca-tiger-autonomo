@@ -99,7 +99,7 @@ node tests/teleop_12_13_logic.mjs
 node tests/repositorio_integridade.mjs
 ```
 
-O workflow [`.github/workflows/ftc-projeto.yml`](../.github/workflows/ftc-projeto.yml) executa testes Node e tenta compilar os autônomos e TeleOps conjuntamente contra o **FTC SDK 12.0**. Consultar o [Relatório de Integração](../docs/RELATORIO_REORGANIZACAO.md) para os resultados efetivamente confirmados, o SHA e eventuais falhas.
+O workflow [`.github/workflows/ftc-projeto.yml`](../.github/workflows/ftc-projeto.yml) executa testes Node e compila autônomos e TeleOps conjuntamente contra o **FTC SDK 12.0**. **A versão 1.3 compilou com sucesso no [run #38334743988](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38334743988), BUILD SUCCESSFUL in 2m 30s.** Consultar o [Relatório de Integração](../docs/RELATORIO_REORGANIZACAO.md) para os resultados efetivamente confirmados, o SHA e eventuais falhas.
 
 **Garantias que NÃO foram demonstradas:** direção física correta, IMU montado corretamente, PID calibrado, tempos de aquecimento do lançador corretos, transmissão, precisão de disparos, mecanismo sem travamentos e atuação do operador sob carga real.
 
