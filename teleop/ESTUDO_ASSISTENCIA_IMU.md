@@ -1,6 +1,6 @@
 # Estudo da assistência IMU do TeleOp — preparação para versão 1.2
 
-**Não é um recurso ativo nas versões 1.0/1.1.** Este documento registra o problema matemático e o protocolo de validação antes de ligar o auxílio.
+**Histórico da análise que fundamentou o TeleOp 1.2/1.3.** A assistência já foi implementada em código experimental, mas seu sentido físico ainda NÃO foi validado. Para os controles realmente disponíveis consulte o [manual ilustrado](MANUAL_COMPLETO.md).
 
 ## 1. Problema observado
 
@@ -26,7 +26,7 @@ MD - ME = -2*y
 
 Se um algoritmo altera as potências da forma `MD += u; ME -= u;`, a soma não muda e a diferença muda. Nesta convenção, isso modifica o **eixo de translação virtual**, não o eixo de giro virtual. Pode explicar o sintoma de avançar/recuar ao tentar corrigir yaw. Não classificar como causa física comprovada antes de realizar teste do robô.
 
-## 3. Formulação proposta para uma versão futura
+## 3. Formulação de referência — adotada na versão experimental 1.2
 
 Só depois de observar o sinal físico do yaw:
 
@@ -47,7 +47,7 @@ double comandoME = -xFinal + yPiloto;
 - Durante testes iniciais, assistência desativada por padrão e somente com potência reduzida. Verificar primeiro sem movimento longitudinal.
 - Definir explicitamente se o modo segurará o rumo com joystick de avanço em zero. A opção **mais conservadora** para teste inicial é corrigir somente enquanto o piloto está avançando ou recuando, sem provocar giro inesperado quando ambos os joysticks estão neutros.
 
-A equação apresentada é um **desenho de controle**, não Java já instalado na versão 1.1.
+A equação é um **desenho matemático**, e a versão experimental 1.2 implementa seu princípio com captura de rumo, sinal de yaw confirmado e limites. Não foi validada fisicamente.
 
 ## 4. Teste físico mínimo e critério de aceite
 
