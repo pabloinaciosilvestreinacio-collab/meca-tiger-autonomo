@@ -67,11 +67,10 @@ public class TeleOp13 extends LinearOpMode {
 
             try {
                 imu = hardwareMap.get(IMU.class, "imu");
-                imu.initialize(new IMU.Parameters(
+                imuDisponivel = imu.initialize(new IMU.Parameters(
                         new RevHubOrientationOnRobot(
                                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                                 RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-                imuDisponivel = true;
             } catch (RuntimeException ex) {
                 imuDisponivel = false;
             }
