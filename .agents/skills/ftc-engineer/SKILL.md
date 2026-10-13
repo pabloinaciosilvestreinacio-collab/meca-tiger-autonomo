@@ -10,7 +10,7 @@ Atuar como engenheiro de software FTC e revisor crítico, preservando comportame
 
 ## Fluxo de trabalho
 1. **Identificar a tarefa.** Classifique como explicação, auditoria, correção, implementação, calibração ou ensaio. Registre restrições e autorização recebida.
-2. **Localizar a fonte.** Leia o código efetivo e somente as referências necessárias. Para a base atual: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/autonomo.java`. Se for uma comparação, consulte `historico/` e hashes/commits.
+2. **Localizar a fonte.** Leia o código efetivo e somente as referências necessárias. A base 3.1 do Autônomo está em `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/autonomo.java`; TeleOp em `.../teleOp/TeleOp10.java` até `TeleOp13.java`, com mapeamento em `teleop/MANUAL_COMPLETO.md`. Se for uma comparação, consulte `historico/` e hashes/commits.
 3. **Modelar hardware e sinais.** Consulte `references/hardware.md` quando o trabalho afetar motores, geometria, sensores ou câmera. Diferencie configuração em código de valores verificados no robô.
 4. **Diagnosticar antes de modificar.** Para cada sintoma, formule hipóteses verificáveis, identifique onde os sinais entram e saem e prefira uma mudança isolada por causa identificada.
 5. **Implementar com escopo mínimo.** Preserve pacote, nomes e controle existentes quando possível. Não altere o 3.1 histórico para criar o 4.0; proponha branch/arquivo compatível após autorização.
@@ -25,8 +25,8 @@ Atuar como engenheiro de software FTC e revisor crítico, preservando comportame
 - Compare movimento esperado versus física de duas rodas motrizes; não invente movimento lateral mecanum.
 - Para mecanismos `MI` e `MS`, respeite ordem de inicialização, interrupção segura e limitação temporal do autônomo.
 
-## Câmera / AprilTags — futura V4
-- O 3.1 auditado não tem visão computacional. Trate C270 / `Webcam 1` e AprilTags como requisitos futuros, não recursos existentes.
+## Câmera / AprilTags — versões existentes 4.0–5.1
+- O 3.1 e toda a linha 3.x não têm visão computacional; a C270 / `Webcam 1` e AprilTags existem nas versões 4.0–5.1, mas hardware real continua sem validação física.
 - Antes de implementar, confirmar nome no `hardwareMap`, acesso USB, versão do SDK, IDs e coordenadas das AprilTags da temporada, sistema de coordenadas da câmera, montagem/calibração e estratégia de falha sem detecção.
 - Propor primeiro um OpMode de teste de detecção independente; integrar alinhamento ao autônomo somente após evidência de leituras confiáveis.
 - Não presumir que detecção da tag fornece pose global sem calibração/extrínsecos e geometria corretos.
@@ -41,3 +41,10 @@ Atuar como engenheiro de software FTC e revisor crítico, preservando comportame
 - **Alteração proposta/efetuada:** onde, por quê, impacto e risco.
 - **Validação:** executado / não executado / falhou; ambiente e resultados.
 - **Próximo ensaio:** passos objetivos e critérios de aceitação.
+
+
+## TeleOp experimental (1.0–1.3)
+- Preservar a mistura `MD=-x-y; ME=-x+y` até aferir sinais físicos e justificar alterações. A correção de rumo deve ser aplicada no canal X virtual, não presumida como potência diferencial convencional.
+- Na 1.2/1.3, BACK aplica apenas correção P limitada; só habilitar com polaridade de yaw selecionada e confirmada no INIT. Não confundir com PID completo do Autônomo.
+- Na 1.3, o gamepad2 ar­ma MI/MS por Y e bloqueia por X. A alimentação temporizada pressupõe MS com RB segurado há 0,8 s; não mede RPM nem confirma peças.
+- Alterar qualquer botão exige atualizar o diagrama `assets/teleop-gamepads.svg`, o manual `teleop/MANUAL_COMPLETO.md` e testes relevantes. O mapeamento físico ainda deve ser aprovado em bancada.
