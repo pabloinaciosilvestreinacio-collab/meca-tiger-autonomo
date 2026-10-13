@@ -55,7 +55,7 @@ for(const sign of [-1,1]){
     let yaw=-(initial%7+1);
     let state={back:true,signSelected:sign,confirmed:true,x:0,y:.5,
       yaw:0,target:0,hold:false,banned:false};
-    state=headingControl(state); // anchor when BACK pressed
+    state={...state,...headingControl(state)}; // anchor sem perder gamepad e configuracao
     const startMagnitude=Math.abs(yaw);
     let final=state;
     for(let t=0;t<220;t++){
