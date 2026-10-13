@@ -29,6 +29,7 @@ O objetivo deste índice é permitir que **alguém novo na equipe entenda o proj
 | [Estudo de assistência IMU](../teleop/ESTUDO_ASSISTENCIA_IMU.md) | Análise algébrica do erro antigo |
 | [Códigos Java](../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/) | TeleOp10, 11, 12 e 13 |
 | [Históricos originais](../historico_teleop/) | Snapshots e relatórios |
+| [Validação TeleOp 1.2–1.3](../historico_teleop/VALIDACAO_TELEOP_1_2_A_1_3.md) | Assistência IMU, gamepad2, mudanças e ensaios pendentes |
 
 ## 4. Desenvolvimento e manutenção
 
