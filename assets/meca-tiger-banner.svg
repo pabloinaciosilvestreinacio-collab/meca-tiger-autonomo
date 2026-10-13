@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="330" viewBox="0 0 1280 330" role="img" aria-label="Banner da Meca Tiger FTC 32578: engenharia, autonomia, teleoperado e documentacao de codigo">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0E1217"/><stop offset="1" stop-color="#232B33"/></linearGradient><linearGradient id="st" x2="0" y2="1"><stop stop-color="#FF914B"/><stop offset="1" stop-color="#F85B15"/></linearGradient>
+<pattern id="hex" width="92" height="78" patternUnits="userSpaceOnUse"><path d="M0 26 L23 13 L46 26 L46 52 L23 65 L0 52" fill="none" stroke="#36414B" stroke-width="1"/></pattern></defs>
+<rect width="1280" height="330" rx="22" fill="url(#bg)"/><rect width="1280" height="330" rx="22" fill="url(#hex)" opacity=".3"/>
+<path d="M15 25 H1250" stroke="#FF6B24" stroke-width="8" stroke-linecap="round"/>
+<path d="M78 108 L150 68 L222 108 V195 L150 238 L78 195Z" fill="#151B22" stroke="#FF6B24" stroke-width="7"/>
+<path d="M111 112 L171 111 L127 133 L185 132 L123 156 L182 154 L125 179" fill="none" stroke="url(#st)" stroke-width="11" stroke-linejoin="round"/>
+<text x="78" y="277" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#A9B2BC">IDENTIDADE GRÁFICA ABSTRATA, NÃO É O LOGOTIPO OFICIAL DA EQUIPE</text>
+<text x="292" y="117" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="5" fill="#FF9A58">FTC · 32578</text>
+<text x="290" y="199" font-family="Arial,Helvetica,sans-serif" font-size="71" font-weight="900" letter-spacing="1" fill="#FAFAF8">MECA TIGER</text>
+<text x="292" y="244" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#D4DAE1">Autônomo · TeleOperado · Simulação · Calibração</text>
+<text x="1125" y="299" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#FF9050">BIOBUZZ 26—27</text>
+</svg>
