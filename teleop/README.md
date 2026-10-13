@@ -1,8 +1,10 @@
-# Meca Tiger FTC #32578 — TeleOp 1.x
+# Histórico de engenharia — TeleOp 1.0 e 1.1
 
 **Primeira etapa:** 12/10/2026  
-**Branch:** `desenvolvimento/teleop-1x`  
-**Estado:** candidata de testes, NÃO homologada fisicamente.
+**Branch original:** `desenvolvimento/teleop-1x`; integrado à linha de reorganização  
+**Estado:** documentação histórica das versões manuais, compiladas e **não homologadas fisicamente**.
+
+> **Para os controles atuais 1.2/1.3 e o desenho dos dois gamepads, consulte o [Manual Completo do TeleOp](MANUAL_COMPLETO.md).** Este arquivo preserva o contrato e a evolução originais da 1.0/1.1.
 
 ## Fonte e limitação importante
 
@@ -78,13 +80,15 @@ Na 1.1 os dois comandos são divididos pelo mesmo divisor `max(1, |MD|, |ME|)`, 
 
 **Critério mínimo:** potência 0 após STOP, duas rodas com sentidos coerentes, nenhuma inversão repentina na troca de joystick, e ausência de comportamento inesperado. Tolerâncias de tempo/erro devem ser definidas ANTES do ensaio.
 
-## 5. Próximas versões propostas (NÃO implementadas nesta etapa)
+## 5. Evoluções desenvolvidas depois deste registro
 
-**1.2 — assistência IMU por BACK:** só após verificar o sentido de yaw. O comando de correção deverá ser combinado **no eixo virtual de giro** da mistura histórica, não simplesmente somando potência diferencial sem verificar a cinemática. Em versões antigas de TeleOp, assistência de rumo fez o robô deslocar em vez de corrigir ângulo; não repetir essa mudança sem ensaio curto. Diferenciar heading hold com joystick neutro, com translação e durante giro manual.
+**1.2 — Assistência IMU experimental:** foi implementada em `TeleOp12.java`, com sinal de yaw escolhido e confirmado no INIT e correção P limitada no canal virtual X. **Ainda não validada fisicamente.**
 
-**1.3 — integração MI/MS pelo gamepad2:** controle separado, sem ativação acidental, com prioridade ao STOP e limites de comando. **Mapeamento dos botões ainda precisa ser definido pela equipe.**
+**1.3 — Integração proposta de MI/MS:** foi implementada em `TeleOp13.java`, com armamento Y, bloqueio X, RB para MS, LB para MI, B para reversão e A para alimentação após aquecimento. O layout dos botões **ainda depende de aceite dos pilotos e ensaio físico**.
 
-**1.4+ — calibração e comparação:** telemetria, logs de direção/rampa, ensaios longos, revisão de gains, compilação/instalação no projeto completo da escola e documentação por versão.
+A descrição exata dos dois códigos novos está no [manual ilustrado](MANUAL_COMPLETO.md) e no [relatório por versão](../historico_teleop/VALIDACAO_TELEOP_1_2_A_1_3.md).
+
+**Futuro:** registrar telemetria real, aferir sinais/rampa, testar mecanismos e somente depois definir TeleOp de competição.
 
 ## 6. Evidência de software
 
@@ -96,7 +100,7 @@ Na 1.1 os dois comandos são divididos pelo mesmo divisor `max(1, |MD|, |ME|)`, 
 
 ### Análise matemática da assistência IMU
 
-Veja também o [estudo da próxima versão IMU 1.2](ESTUDO_ASSISTENCIA_IMU.md). A fórmula atual cria um **eixo virtual de giro pela soma dos comandos de motores**. Injetar uma correção com sinais opostos modifica o outro eixo virtual, o que pode explicar o problema anterior de movimento linear indesejado.
+Veja também o [estudo que embasou a versão experimental IMU 1.2](ESTUDO_ASSISTENCIA_IMU.md). A fórmula atual cria um **eixo virtual de giro pela soma dos comandos de motores**. Injetar uma correção com sinais opostos modifica o outro eixo virtual, o que pode explicar o problema anterior de movimento linear indesejado.
 
 ## 7. Ficha mínima por teste
 
