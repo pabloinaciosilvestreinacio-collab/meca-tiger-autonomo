@@ -28,9 +28,9 @@ function mechanisms(s,btn,dt) {
   if(btn.x)s.armed=false;
   else if(btn.y&&!s.yprev&&noCommands)s.armed=true;
   s.yprev=btn.y;
-  if(!s.armed||!btn.rb)s.warmTime=0;
+  if(!s.armed||!btn.rb||btn.b)s.warmTime=0;
   else s.warmTime+=dt;
-  const shooter=s.armed&&btn.rb;
+  const shooter=s.armed&&btn.rb&&!btn.b;
   const ready=shooter&&s.warmTime>=0.80;
   let intake=0;
   if(s.armed){
@@ -95,8 +95,8 @@ for(let i=0;i<40;i++)out=mechanisms(s,{...neutral(),rb:true,a:true},.02);
 ok(out.ready&&out.intake===.6,"feed enabled only after 800ms");
 out=mechanisms(s,{...neutral(),a:true},.02);
 ok(out.intake===0&&out.shooter===0&&!out.ready,"releasing shooter disables feeder immediately");
-out=mechanisms(s,{...neutral(),b:true,lb:true},.02);
-ok(out.intake===-.35,"reverse overrides intake");
+out=mechanisms(s,{...neutral(),b:true,lb:true,rb:true},.02);
+ok(out.intake===-.35&&out.shooter===0&&!out.ready,"reverse overrides intake and disables MS");
 out=mechanisms(s,{...neutral(),x:true,rb:true,a:true},.02);
 ok(!out.armed&&out.intake===0&&out.shooter===0,"X forces output zero");
 out=mechanisms(s,{...neutral(),y:true,rb:true},.02);
