@@ -12,6 +12,7 @@ O projeto tem duas metas: permitir que a equipe continue programando com seguran
 
 | Quero... | Acesse |
 |---|---|
+| Testar Java em um robô virtual com duas vistas | **[Meca Sim 0.1 — protótipo local](simulador/README.md)** |
 | Entender o projeto e a estrutura | **[Portal da documentação](docs/README.md)** |
 | Aprender todo o desenvolvimento do autônomo | [Dossiê técnico das versões 2–5.1](DOSSIER_TECNICO_COMPLETO_AUTONOMO.md) |
 | Consultar/calibrar o autônomo | [Manual geral de calibração](MANUAL_GERAL_CALIBRACAO_TESTES.md) |

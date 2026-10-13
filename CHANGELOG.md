@@ -1,5 +1,12 @@
 # Historico de alteracoes
 
+## 12/10/2026 — Meca Sim 0.1 (protótipo local, branch própria)
+
+- Criado `simulador/`: vista de cima/lateral, editor Java, modelo diferencial, encoders, IMU ideal, gamepads e balística manual.
+- Execução Java real em JVM local contra camada FTC parcial; INIT/START/STOP, console e limite de duração.
+- Incluídos planejamento, documentação, exemplos, testes Python/JavaScript e workflow específico. Não modifica OpModes ou históricos.
+- Modelo sem colisão/atrito/câmera; gamepad físico e revisão visual no navegador pendentes. Não equivale a build Android FTC nem calibração física.
+
 ## 12–13/10/2026 — Reorganização integrada do repositório e TeleOp 1.2–1.3
 
 **Objetivo:** projeto mais intuitivo e preparado para revisão pública futura, sem apagar históricos.

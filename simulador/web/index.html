@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Simulador FTC 2D local: Java, encoders, IMU e gamepad"><title>Meca Sim — Laboratório FTC 2D</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><a class="brand" href="/">M<span>↗</span> <b>MECA SIM</b><small>LABORATÓRIO FTC / 0.1</small></a><div class="badge">MODELO IDEAL · LOCAL</div></header>
+<main>
+<div class="intro"><div><p class="eyebrow">DO PLANO CARTESIANO AO CÓDIGO</p><h1>Programe. Observe. Ajuste.</h1><p>Seu Java movimenta um robô virtual. Duas vistas para entender o resultado.</p></div><div class="status-box"><span id="status" role="status">Conectando…</span><strong id="clock">00.00 s</strong></div></div>
+<div class="toolbar"><button id="compile" class="primary">1. Compilar / INIT</button><button id="start">2. START</button><button id="stop" class="danger">■ STOP</button><button id="reset">Reiniciar posição</button><button id="export">Exportar resultado</button><span id="controller">Controle: pressione um botão para detectar</span></div>
+<div id="message" role="alert"></div>
+<div class="workspace">
+<section class="views">
+<div class="panel"><div class="panel-title"><h2>01 <span>Vista de cima</span></h2><small>Campo genérico · metros · clique para mover o alvo</small></div><canvas id="top" aria-label="Robô, trilha e lançador no plano cartesiano"></canvas><div class="readouts"><span>X <b id="px">—</b></span><span>Y <b id="py">—</b></span><span>YAW <b id="yaw">—</b></span><span id="bounds">Frente +Y · yaw positivo ↶</span></div></div>
+<div class="panel"><div class="panel-title"><h2>02 <span>Vista lateral</span></h2><button id="shoot">↗ Visualizar lançamento</button></div><canvas id="side" aria-label="Projeção lateral e parábola de lançamento"></canvas><p class="caption" id="shot-info">Prévia balística manual. Não confirma lançamento ou pontuação do Java.</p></div>
+<div class="panel compact"><div class="panel-title"><h2>Telemetria <span>e hardware</span></h2><small>Feedback do código Java</small></div><div id="motors" class="motors"></div><pre id="telemetry">Aguardando telemetry.update()</pre></div>
+</section>
+<aside class="panel editor"><div class="tabs"><button data-tab="code" class="selected">Código Java</button><button data-tab="robot">Robô</button><button data-tab="launcher">Lançador</button></div>
+<section id="tab-code" class="tab"><label for="example">Exemplo de partida</label><select id="example"><option value="">Selecione…</option></select><label for="source">Cole uma classe completa LinearOpMode</label><textarea id="source" spellcheck="false" aria-label="Código Java do OpMode"></textarea><p class="caption">JDK 17+ e Python 3.10+. SDK parcial; câmera, Android e bibliotecas externas ainda não disponíveis.</p><details><summary>Console de compilação e execução</summary><pre id="logs">Nenhuma execução.</pre></details></section>
+<section id="tab-robot" class="tab" hidden><h3>Configuração do chassi</h3><p>Aplicada no próximo INIT ou ao reiniciar. Parâmetros são hipóteses editáveis.</p><div class="fields">
+<label>Motor esquerdo<input id="left" value="ME"></label><label>Motor direito<input id="right" value="MD"></label>
+<label>Largura (m)<input id="width" type="number" value="0.45" min="0.05" max="2" step="0.01"></label><label>Comprimento (m)<input id="length" type="number" value="0.45" min="0.05" max="2" step="0.01"></label>
+<label>Bitola (m)<input id="track" type="number" value="0.45" min="0.05" max="2" step="0.01"></label><label>Velocidade máxima (m/s)<input id="max_speed" type="number" value="1" min="0.05" max="10" step="0.05"></label>
+<label>Ticks por metro<input id="ticks_per_m" type="number" value="1980.6" min="1" max="100000" step="0.1"></label><label>Duração máxima (s)<input id="duration" type="number" value="30" min="1" max="180"></label>
+<label>X inicial (m)<input id="x" type="number" value="1.83" min="-10" max="10" step="0.05"></label><label>Y inicial (m)<input id="y" type="number" value="0.65" min="-10" max="10" step="0.05"></label><label>Yaw inicial (°)<input id="initial-yaw" type="number" value="0" step="5"></label>
+</div><label class="check"><input id="invert_left" type="checkbox"> Montagem física esquerda invertida</label><label class="check"><input id="invert_right" type="checkbox" checked> Montagem física direita invertida</label><p class="caption">Montagem física e setDirection() são sinais separados. O exemplo usa ME FORWARD / MD REVERSE.</p><h3>Controle e teclado</h3><p>Controle com mapeamento padrão do navegador. W/S: analógico esquerdo Y. A/D: analógico direito X. Espaço: botão A. B/X/Y: respectivos botões. Setas: D-pad. Dois gamepads suportados.</p><p>Ao perder foco, o teclado é zerado; ao ocultar a página, a simulação para.</p></section>
+<section id="tab-launcher" class="tab" hidden><h3>Coordenadas presas ao robô</h3><p>O centro do chassi é a origem local. X local aponta para a direita; Y local, para a frente.</p><div class="fields">
+<label>Deslocamento lateral (m)<input id="offset-x" type="number" value="0.1125" step="0.01"></label><label>Deslocamento frontal (m)<input id="offset-y" type="number" value="0.225" step="0.01"></label>
+<label>Altura (m)<input id="height" type="number" value="0.30" min="0" max="5" step="0.01"></label><label>Velocidade da bola (m/s)<input id="speed" type="number" value="5" min="0.1" max="30" step="0.1"></label>
+<label>Elevação (°)<input id="elevation" type="number" value="45" min="0" max="89" step="1"></label><label>Azimute relativo (°)<input id="azimuth" type="number" value="0" step="5"></label>
+<label>Alvo X (m)<input id="target-x" type="number" value="1.83" step="0.05"></label><label>Alvo Y (m)<input id="target-y" type="number" value="3.30" step="0.05"></label><label>Alvo altura (m)<input id="target-h" type="number" value="0.90" min="0" max="5" step="0.05"></label>
+</div><p class="caption">Mesma transformação e parábola do Desmos. Sem resistência do ar. A velocidade é uma entrada manual; a potência de MS ainda não prevê RPM ou velocidade da bola.</p></section>
+</aside>
+</div>
+<footer>MECA TIGER · Ferramenta experimental para estudo de lógica. Campo sem obstáculos e sem colisões. Uma simulação não substitui ensaio no robô.<br>Execute somente Java confiável: o processo local tem as permissões da sua conta.</footer>
+</main><script>window.SIM_TOKEN="__TOKEN__";</script><script type="module" src="/app.js"></script>
+</body></html>
