@@ -1,0 +1,79 @@
+name: FTC SDK 12.0 — Projeto completo
+
+on:
+  push:
+    branches:
+      - main
+      - organizacao/repositorio-ftc-integrado
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ftc-projeto-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testes:
+    name: Logica, documentacao e seguranca
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Suites matematicas e auditoria
+        run: |
+          set -e
+          node tests/autonomo32_logic_tests.mjs
+          node tests/autonomo32_travel_model.mjs
+          node tests/autonomo_sem_camera_3x.mjs
+          node tests/auditoria_autonomo_3x.mjs
+          node tests/autonomo41_logic_tests.mjs
+          node tests/autonomo50_synthetic_tests.mjs
+          node tests/autonomo51_cell_tests.mjs
+          node tests/autonomo51_pid_model.mjs
+          node tests/auditoria_documentacao_geral.mjs
+          node tests/teleop_1x_logic.mjs
+          node tests/teleop_1x_static.mjs
+          node tests/teleop_12_13_logic.mjs
+          node tests/repositorio_integridade.mjs
+
+  compilacao:
+    name: FTC SDK v12.0 — todas as classes Java
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Localizar Android SDK do GitHub runner
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMGR="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -n "$SDKMGR"
+          echo "$(dirname "$SDKMGR")" >> "$GITHUB_PATH"
+      - name: Componentes Android
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "platforms;android-30" "platforms;android-35" "build-tools;35.0.0"
+      - name: Clonar release FTC SDK v12.0 oficial
+        run: git clone --branch v12.0 --depth 1 https://github.com/FIRST-Tech-Challenge/FtcRobotController.git sdk
+      - name: Copiar Autonomo, TeleOp e diagnosticos
+        run: |
+          set -e
+          AUTO=sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo
+          TELEOP=sdk/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp
+          mkdir -p "$AUTO" "$TELEOP"
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/*.java "$AUTO/"
+          cp TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/*.java "$TELEOP/"
+          test -f "$AUTO/Autonomo51.java"
+          test -f "$TELEOP/TeleOp13.java"
+      - name: Build Java real FTC SDK 12.0
+        working-directory: sdk
+        run: |
+          chmod +x gradlew
+          ./gradlew :TeamCode:assembleDebug --no-daemon --stacktrace

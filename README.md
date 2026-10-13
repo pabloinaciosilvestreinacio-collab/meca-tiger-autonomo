@@ -1,83 +1,92 @@
-# Meca Tiger - Autonomo FTC
+![Banner da Meca Tiger FTC](assets/meca-tiger-banner.svg)
 
-## Autonomo 3.2 (sem camera) — candidato para testes
+# Meca Tiger FTC #32578 — Programação do Mequinha
 
-A versão sem câmera foi criada em `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo32.java`. O arquivo original `autonomo.java` continua sendo a 3.1 intacta. Nenhuma funcionalidade de visão integra o 3.2.
+**SESI SENAI Maracanaú · Ceará, Brasil · Temporada BIOBUZZ 2026–2027**
 
-Mantem giro -50°, avança 2000 mm coletando, gira +100° e tenta lançar 3 peças. Corrige condição de parada por encoder, continuidade angular do PID, watchdog de giro e reserva de tempo. Todos os resultados até aqui são testes estáticos, matemáticos e simulações sintéticas; `20:1`, IMU e ganhos de PID aguardam medição real.
+Repositório técnico de engenharia de software do nosso robô: **autônomo com e sem câmera, TeleOp, diagnóstico, modelos de simulação, relatórios de validação e procedimentos de calibração**.
 
-- Historico: `historico/Autonomo_3_2.txt`
-- Validacao detalhada: `historico/VALIDACAO_Autonomo_3_2.md`
-- Testes: `node tests/autonomo32_logic_tests.mjs` e `node tests/autonomo32_travel_model.mjs`
-- Workflow de compilacao: `.github/workflows/autonomo32-validation.yml` (resultado ainda pendente).
+O projeto tem duas metas: permitir que a equipe continue programando com segurança e tornar o conhecimento compreensível para outras equipes de robótica. Os arquivos históricos são preservados; código novo não substitui as versões anteriores silenciosamente.
 
-## Candidato mais novo: Autonomo 5.1 (branch de revisao)
+## Comece aqui
 
-- Arquivo: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo51.java`
-- Mantem: giro -50 graus, coleta a 2000 mm, giro +100 graus, alinhamento por cluster da propria alianca e tentativa de lancar 3 elementos.
-- INIT: D-pad esquerda RED / direita BLUE; cima SCORING / baixo AUDIENCE; A confirma estrategia. Sem confirmacao o AUTO nao move motores.
-- Detecta automaticamente a CELL pontuavel da propria alianca pelo `roll`, mesmo que mude de orientacao.
-- Limites somados + margem: 26,90 s teoricos, dentro de 29 s utilizaveis.
-- Veja `historico/VALIDACAO_VERSOES_4_2_A_5_1.md`. O CI foi configurado mas a compilacao real ainda nao foi confirmada; este codigo **NAO** foi testado fisicamente.
-- Scripts: `node tests/autonomo50_synthetic_tests.mjs`, `node tests/autonomo51_cell_tests.mjs`, `node tests/autonomo51_pid_model.mjs`.
-- Diagnosticos de campo (NAO acionam motores): `DiagnosticoAprilTag.java` e `DiagnosticoSinais.java`.
+| Quero... | Acesse |
+|---|---|
+| Entender o projeto e a estrutura | **[Portal da documentação](docs/README.md)** |
+| Aprender todo o desenvolvimento do autônomo | [Dossiê técnico das versões 2–5.1](DOSSIER_TECNICO_COMPLETO_AUTONOMO.md) |
+| Consultar/calibrar o autônomo | [Manual geral de calibração](MANUAL_GERAL_CALIBRACAO_TESTES.md) |
+| Calibrar a linha 3.x **sem câmera** | [Guia específico do Autônomo 3.x](GUIA_AUTONOMO_SEM_CAMERA.md) |
+| Ver os **12 códigos originais** do autônomo | [Índice de fontes e históricos](INDICE_COMPLETO_CODIGOS_AUTONOMO.md) |
+| Pilotar, entender os botões e os mecanismos | **[Manual do TeleOp com desenho dos gamepads](teleop/MANUAL_COMPLETO.md)** |
+| Ver a validade de cada teste | [Relatório geral de validação](RELATORIO_GERAL_VALIDACAO_SOFTWARE.md) |
+| Registrar testes feitos no robô | [Ficha de ensaios](MODELO_REGISTRO_ENSAIO_AUTONOMO.md) |
+| Contribuir ou revisar alterações | [Guia de contribuição](CONTRIBUTING.md) |
+| Preparar futura publicação pública | [Checklist de publicação](docs/PUBLICACAO.md) |
 
-### Histórico completo
-- 3.1 estavel: `Autonomo/autonomo.java` (arquivo 3.1 em main; nao alterar)
-- 4.0: `Autonomo4.java`
-- 4.1: `Autonomo41.java`
-- 4.2: `Autonomo42.java`
-- 5.0: `Autonomo50.java`
-- 5.1: `Autonomo51.java`
-- Cada versao evolutiva esta preservada em `historico/Autonomo_X_Y.txt` na branch.
+## Software disponível
 
-Repositorio do codigo autonomo da equipe Meca Tiger FTC #32578.
+| Subsistema | Versões e classe candidata | Estado verificável |
+|---|---|---|
+| Autônomo **sem câmera** | 3.1–3.5; candidata `Autonomo35.java` | Compilação FTC confirmada; calibração física pendente |
+| Autônomo **com câmera** | 4.0–4.2, 5.0–5.1; candidata `Autonomo51.java` | Compilação FTC confirmada; C270 e mira física pendentes |
+| TeleOp **manual** | 1.0–1.1; classe `TeleOp11.java` | Compilação FTC confirmada; sinais físicos pendentes |
+| TeleOp **IMU + mecanismos** | 1.2–1.3; `TeleOp12.java`/`TeleOp13.java` | **SDK v12.0 compilado**; experimental, ensaios físicos pendentes |
 
-## Versoes e status
+**O que “compilado” significa:** as classes Java foram aceitas pelo projeto FTC SDK utilizado no GitHub Actions. **Não equivale a testes em pista ou prova de pontuação.** Veja a [matriz de evidências](docs/TESTES.md). O projeto preserva as simulações e os testes matemáticos, sem apresentá-los como medições reais.
 
-- **3.1 (base estavel)**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/autonomo.java`.
-- **4.0 (revisao anterior)**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo4.java`.
-- **4.1 (candidata em testes, apenas na branch de revisao)**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/Autonomo41.java`.
-- **Teste separado da camera**: `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/DiagnosticoAprilTag.java`.
+## Estrutura do repositório
 
-A 4.1 usa `getFreshDetections()` e melhora o tratamento de perda de frames, delta angular do PID e conversao de engrenagens. Ainda depende de build no FTC SDK e testes fisicos. Consulte `historico/VALIDACAO_Autonomo_4_1.md` e reproduza a simulacao com `node tests/autonomo41_logic_tests.mjs`.
+```text
+.
+├── TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
+│   ├── Autonomo/             # Versões Java do autônomo + diagnósticos
+│   └── teleOp/               # TeleOp 1.0, 1.1, 1.2 e 1.3
+├── assets/                   # Banner e diagramas SVG
+├── docs/                     # Portal, arquitetura, testes e publicação
+├── teleop/                   # Manual ilustrado e estudo do IMU
+├── historico/                # Snapshots e validações individuais do autônomo
+├── historico_teleop/         # Snapshots e validações individuais do TeleOp
+├── tests/                    # Simulações e testes matemáticos em Node.js
+├── .github/workflows/        # Compilação e verificações automatizadas
+├── README.md                 # Você está aqui
+├── CHANGELOG.md              # Mudanças registradas por versão
+└── AGENTS.md                 # Convenções de trabalho no repositório
+```
 
-## Autonomo estavel
+Não movemos os históricos antigos para preservar **links, hashes de conteúdo, rastreabilidade e referências cruzadas**. O [portal de documentação](docs/README.md) é a navegação única; cada documento original continua no lugar.
 
-`Autonomo 3.1`
+## Como compilar no Android Studio
 
-O codigo atual executa:
+Este repositório armazena **o código da equipe**, mas **não** uma cópia completa do projeto Android FTC. Use o workspace oficial **FTC SDK 12.0**, correspondente à temporada:
 
-1. Virada relativa de -50 graus.
-2. Captura do rumo pelo IMU.
-3. Coleta durante um deslocamento de 2000 mm.
-4. Virada relativa de +100 graus.
-5. Lancamento de 3 pecas por temporizacao.
+1. Obtenha o [FTC Robot Controller v12.0](https://github.com/FIRST-Tech-Challenge/FtcRobotController/releases/tag/v12.0) e abra o projeto completo no Android Studio compatível (Narwhal 3 Feature Drop ou posterior).
+2. Copie as classes Java desejadas de `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/` e/ou `.../teleOp/` deste repositório para o mesmo pacote dentro do `TeamCode` do projeto FTC. Mantenha os nomes de classes e arquivos.
+3. Configure os nomes do hardware no Driver Station: `MD`, `ME`, `MI`, `MS`, `imu`; e `Webcam 1` somente para os OpModes com câmera. **Nomes configurados não garantem polaridade física correta.**
+4. Compile no terminal do **projeto FTC completo**, no Windows:
 
-O controle de tracao usa encoders e IMU em `RUN_WITHOUT_ENCODER`, com PID
-calculado manualmente pelo programa.
+   ```powershell
+   .\gradlew.bat :TeamCode:assembleDebug
+   ```
 
-## Codigo
+5. Antes de instalar/executar, siga os [testes de sinais e de bancada](MANUAL_GERAL_CALIBRACAO_TESTES.md). Não comece pela rotina completa nem pelo lançador com peças.
 
-O arquivo principal esta em:
+## Verificação reproduzível
 
-`TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Autonomo/autonomo.java`
+```bash
+node tests/autonomo_sem_camera_3x.mjs
+node tests/teleop_1x_logic.mjs
+node tests/teleop_12_13_logic.mjs
+node tests/repositorio_integridade.mjs
+```
 
-Para usar no projeto FTC SDK, coloque esse arquivo no mesmo caminho dentro do
-modulo `TeamCode`.
+O workflow [FTC projeto integrado](.github/workflows/ftc-projeto.yml) compila os arquivos com o **SDK v12.0 fixado por tag** e executa testes disponíveis. **Último build comprovado dessas classes: [Actions #38334743988](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38334743988), 2/2 jobs SUCCESS, BUILD SUCCESSFUL.** Consulte os jobs/logs e o [relatório de integração](docs/RELATORIO_REORGANIZACAO.md) para resultados do commit exato, não apenas badges.
 
-## Hardware configurado
+## Segurança, publicabilidade e licença
 
-| Nome | Funcao |
-| --- | --- |
-| `MD` | Motor direito da tracao |
-| `ME` | Motor esquerdo da tracao |
-| `MI` | Intake/alimentador |
-| `MS` | Lancador |
-| `imu` | IMU do Control Hub |
+**Este repositório permanece privado.** Sua possível publicação futura exige revisão de dados sensíveis, direitos de imagens/logotipos, metadados e escolha de licença pela equipe. Não há autorização para presumir que terceiros possam reutilizar qualquer parte do código sem uma licença definida. Leia [PUBLICACAO.md](docs/PUBLICACAO.md) e [SECURITY.md](SECURITY.md) antes de mudar a visibilidade.
 
-## Aviso de teste
+**Aviso:** este é um projeto educacional da equipe. Código de controle físico deve ser testado sob supervisão, com botão STOP acessível; nunca operar mecanismos de lançamento perto de pessoas.
 
-A logica foi simulada e a sintaxe foi verificada com interfaces equivalentes
-as chamadas do FTC SDK. A validacao final deve ser feita no Android Studio e
-no robo, conferindo direcoes dos motores e orientacao fisica do Control Hub.
+---
+
+*De Maracanaú para o mundo — engenharia, aprendizagem e colaboração.*

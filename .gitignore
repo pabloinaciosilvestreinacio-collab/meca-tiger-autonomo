@@ -1,7 +1,32 @@
+# Projeto FTC/Android local
 .gradle/
 .idea/
-build/
-*.iml
+**/build/
+**/captures/
 local.properties
-captures/
-external/
+*.iml
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Sistemas e editores
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+*.tmp
+
+# Credenciais / arquivos locais sensíveis
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Testes e cache
+node_modules/
+coverage/
+__pycache__/

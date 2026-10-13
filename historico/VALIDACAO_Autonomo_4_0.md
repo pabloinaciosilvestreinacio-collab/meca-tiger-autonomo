@@ -114,3 +114,14 @@ Estes valores não devem ser considerados “confirmados” por simulação:
 
 ## Conclusão
 O 4.0 está coerente com o FTC SDK 12.0 e com a API BIOBUZZ atual, e as falhas lógicas encontradas nesta revisão foram corrigidas. As simulações reduzem riscos de sinal, timeout, overshoot e seleção incorreta de alvo, mas não substituem validação física do drivetrain, IMU, C270 e lançador.
+
+
+---
+
+## Atualização de evidência de compilação — 12/10/2026
+
+**FTC SDK integrado: BUILD APROVADO.** O [GitHub Actions run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887) compilou conjuntamente **todas as classes Java de autônomo com e sem câmera**, incluindo esta versão 4.0, com `TeamCode:compileDebugJavaWithJavac`, `TeamCode:assembleDebug` e a mensagem **BUILD SUCCESSFUL in 2m 42s**.
+
+O job de testes matemáticos do mesmo run terminou com **SUCCESS**. Simulações e contagens originalmente descritas em seções anteriores continuam sendo um registro histórico; não foram todas reconstruídas por script independente neste novo CI.
+
+**Limite:** compilação do código no FTC SDK oficial obtido no CI NÃO significa montagem/calibração da C270, motores ou lançador validada fisicamente. Antes de instalar, conferir o projeto FTC SDK local, hardwareMap, sinais e campo. Consulta consolidada: [RELATORIO_GERAL_VALIDACAO_SOFTWARE.md](../RELATORIO_GERAL_VALIDACAO_SOFTWARE.md).

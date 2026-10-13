@@ -18,7 +18,7 @@
 | Ticks por mm | `(28*20)/(pi*90)` ≈ 1,9806 | Dedução matemática dos parâmetros acima |
 | Modo da tração | `RUN_WITHOUT_ENCODER` | Código utiliza encoder para feedback manual |
 | Temporização máxima do autônomo | 30 s, reserva de 1 s | Constantes do código |
-| Webcam futura | Logitech C270, nome pretendido `Webcam 1` | Requisito de projeto; não existe no 3.1 |
+| Webcam nas versões 4.x/5.x | Logitech C270, `Webcam 1` | Implementado no código de visão; hardware e calibração pendentes |
 
 ## Conferências antes de calibração
 1. Identificar etiqueta/especificação dos motores e a redução real instalada; registrar foto ou medição quando possível.
@@ -33,3 +33,9 @@
 - Hash Git do código 3.1: `cccc44f9ddfd8b90b06fb826d35e21b19bdc4fcb`.
 - A versão está preservada em `historico/Autonomo_3_1.txt` com o mesmo hash.
 - A raiz auditada **não contém** todos os arquivos Gradle do FTC SDK; não assumir compilação pronta.
+
+
+## TeleOp v1.2/v1.3 — escopo adicional
+- A 1.2 pode inicializar `imu` e aplica correção de heading via botão BACK somente após seleção explícita do sinal de yaw. Sem calibração não há garantia de correção física.
+- A 1.3 mapeia MI e MS separadamente, com bloqueio em X, armamento em Y, comandos temporizados; teste de bancada necessário.
+- Consulte [manual ilustrado](../../../../teleop/MANUAL_COMPLETO.md) e [arquitetura](../../../../docs/ARQUITETURA.md). O nome original de classe `robo` usado na escola não foi recuperado da pasta auditada.

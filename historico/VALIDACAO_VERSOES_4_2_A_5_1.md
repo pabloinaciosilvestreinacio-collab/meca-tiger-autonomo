@@ -73,3 +73,14 @@ Não criar número 6.0 apenas por estética. Requisito mínimo: build FTC 12.0 c
 
 ## Reversão
 Nenhuma das versões 3.1, 4.0 ou 4.1 foi substituída. Todas as novas classes 4.2, 5.0, 5.1 e diagnósticos residem apenas na branch de revisão. Não houve merge em `main`.
+
+
+---
+
+## Atualização de evidência de compilação — 12/10/2026
+
+**FTC SDK integrado: BUILD APROVADO.** O [GitHub Actions run #38321732887](https://github.com/pabloinaciosilvestreinacio-collab/meca-tiger-autonomo/actions/runs/38321732887) compilou conjuntamente **todas as classes Java de autônomo com e sem câmera**, incluindo esta versão 4.2 / 5.0 / 5.1, com `TeamCode:compileDebugJavaWithJavac`, `TeamCode:assembleDebug` e a mensagem **BUILD SUCCESSFUL in 2m 42s**.
+
+O job de testes matemáticos do mesmo run terminou com **SUCCESS**. Os scripts tests/autonomo50_synthetic_tests.mjs, tests/autonomo51_cell_tests.mjs e tests/autonomo51_pid_model.mjs foram executados novamente em CI. Os cenários usam dados sintéticos, não capturas de AprilTags reais.
+
+**Limite:** compilação do código no FTC SDK oficial obtido no CI NÃO significa montagem/calibração da C270, motores ou lançador validada fisicamente. Antes de instalar, conferir o projeto FTC SDK local, hardwareMap, sinais e campo. Consulta consolidada: [RELATORIO_GERAL_VALIDACAO_SOFTWARE.md](../RELATORIO_GERAL_VALIDACAO_SOFTWARE.md).
