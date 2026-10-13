@@ -21,7 +21,9 @@ jobs:
         with:
           node-version: '22'
       - name: Testes sintéticos
-        run: node tests/teleop_1x_logic.mjs
+        run: |
+          node tests/teleop_1x_logic.mjs
+          node tests/teleop_1x_static.mjs
 
   compilacao:
     name: TeleOp - FTC SDK compile
