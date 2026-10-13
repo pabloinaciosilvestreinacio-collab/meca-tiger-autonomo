@@ -32,7 +32,7 @@ public class TeleOp10 extends LinearOpMode {
             telemetry.addLine("TeleOp 1.0 - somente chassi");
             telemetry.addLine("Joystick esquerdo Y: frente/tras");
             telemetry.addLine("Joystick direito X: giro");
-            telemetry.addLine("MI e MS desligados: nao sao mapeados neste OpMode");
+            telemetry.addLine("MI e MS: nao controlados por este OpMode");
             telemetry.update();
 
             waitForStart();
