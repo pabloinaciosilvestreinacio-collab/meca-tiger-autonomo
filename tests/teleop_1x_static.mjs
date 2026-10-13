@@ -25,8 +25,8 @@ for (const [file, history, className, opMode] of versions) {
   verify(java.includes("} finally {"), file + " missing finally block");
   verify(!/VisionPortal|WebcamName|AprilTag|\.vision\./.test(java),
     file + " must not depend on camera");
-  verify(!/\bIMU\b|\.getYaw\(/.test(java),
-    file + " is intentionally manual only");
+  verify(!/import\s+.*\.hardware\.IMU\s*;|hardwareMap\.get\(IMU\.class|\.getYaw\(/.test(java),
+    file + " must not initialize or read IMU");
   verify(java.includes("MD.setPower(0);") && java.includes("ME.setPower(0);"),
     file + " missing zero-power exit");
   verify(java.includes("double potenciaMD = -x - y;")
