@@ -71,3 +71,12 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - PARK: Bézier de avanço que sai de L2 e curva para a área vermelha X=0,255 / Y=2,380 / yaw=90, sem giros intermediários; redução de potência perto das paredes.
 - Validada **compilação sintática Java com stubs** e **simulação cinemática simplificada** das três curvas; **não** validado no Meca Sim ou no robô físico. Ciclo 4+4+4 e PARK em 29,3 segundos ainda não confirmado; contadores de comandos de alimentação não comprovam acertos físicos.
 - Versões anteriores L1-01, L1-02, L1-03, L1-04, L1-05 v1 e v2 preservadas sem modificação.
+
+## L1-05 v4 — terceira sequência de disparos desbloqueada (29/10/2026)
+
+- Classe separada: `AutonomoL105FlowerCurvasL2ParkRPMv4.java`.
+- Relato operador v3: percurso, coleta Flower e PARK funcionaram, mas não houve terceiro ciclo de lançamento.
+- Causa provável isolada no código: prazo do 3º ciclo terminava em `LIM_GLOBAL - RESERVA_PARK` = `29.3 - 4.2 = 25.1s`. Se o retorno a L2 se completasse após esse instante, `aguardarRpmEIntervalo()` não executaria o loop, resultando em 0/4 pulsos.
+- Ajuste v4: reserva experimental PARK = 2.35 s (prazo do terceiro ciclo = 26.95 s); intervalo mínimo **somente** do terceiro ciclo = 0.44 s, ainda condicionado a três janelas estáveis de 80 ms por disparo.
+- Novos diagnósticos: instante da chegada a L2, prazo de tiro, primeiro e último pulso, motivo de bloqueio.
+- Rotas/curvas e coordenadas de v3 mantidas, assim como todos os L1 anteriores. Compilação Java **com stubs** concluída, teste Meca Sim pendente. Não garantir 12 POLLEN + PARK sem tempo real/feedback da simulação.
