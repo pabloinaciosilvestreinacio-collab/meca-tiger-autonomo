@@ -31,6 +31,23 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - Rota e terceiro lançamento ainda não validados no Meca Sim; risco significativo de exceder 29,3 segundos. A fonte do layout da Flower é a imagem marcada enviada pelo operador, não uma medição física.
 - O código não tem sensor de presença/contagem de POLLEN; quatro pulsos de MI/SA não provam quatro bolas coletadas ou lançadas.
 
+## L1-04 v2 — Flower superior corrigida, experimental
+
+- Classe: `AutonomoL104FlowerSuperiorRPMv2`.
+- Corrigido o erro de eixo Y: Flower no topo (Y aproximadamente 3,398 m), em vez da parede inferior.
+- Depois de L2, sai da parede, coleta avançando para +Y, retorna em ré, tenta novo lançamento de 4 POLLEN e PARK. Mantido como histórico independente.
+- Status: versão experimental; não substituir L1-01, L1-02 ou L1-03.
+
+## L1-05 — Flower superior → RETORNO obrigatório a L2 → 4 lançamentos → PARK
+
+- Classe: `AutonomoL105FlowerRetornaL2RPM`.
+- Fluxo: 4 L1 → coleta Garden → 4 L2 → coleta Flower superior → regressa à faixa L2, aproxima-se novamente da parede com verificação de folga → 4 novos pulsos com RPM estável → saída reta → PARK (X=0,255; Y=2,380 m).
+- Otimização de potência em trechos livres: corredor sob HIVE 0,85 → 0,94; travessia lateral da Flower 0,53 → 0,73; retorno lateral 0,64 → 0,77; PARK livre 0,88 → 0,95. Aproximação final da parede e Garden mantidas lentas.
+- Regra de tiro: 3 amostras consecutivas de RPM na faixa; sem liberar alimentação se RPM insuficiente; não omitir silenciosamente o terceiro posto.
+- Compilação Java de estrutura verificada com stubs; **não equivale a build integral FTC SDK nem a teste do simulador ou robô físico**.
+- 29,3 segundos pode ser insuficiente para 12 disparos + duas coletas + PARK. Registrar tempo e falhas reais antes de aprovar.
+- Fonte congelada; SHA-256 do arquivo local: `c6591e566f8f389508b89ccf50b53ba5b4b3e9496ff07b94de217488f8d8d13f` (confirmar equivalência de conteúdo antes de usar este hash como hash do blob GitHub).
+
 ## Hardware e limites de validação
 
 2WD diferencial; ME, MD, MI, MS, SA e imu; SDK FTC 12.0; roda Ø90 mm; 560 ticks/revolução da roda de locomoção; bitola aprox. 45 cm. `RPM_ALVO_MS_SIM=127` é parâmetro do simulador, **não um RPM físico calibrado**. Potência física 0.60 acertou alvo empiricamente, mas o RPM correspondente ainda precisa ser medido no encoder do MS.
