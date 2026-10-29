@@ -60,3 +60,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - Correção: retornar a Y=3.340 (folga de aproximadamente 95 mm com yaw=180), executar a aproximação fina a L2, tentar 4 disparos extras somente com RPM estável e seguir para PARK X=0.255/Y=2.380.
 - Se o terceiro ciclo não completar por timeout/RPM e ainda houver tempo, tentar PARK e registrar o resultado como parcial, sem alegar 4+4+4.
 - Verificação: compilação Java com stubs concluída; teste Meca Sim e validação física **pendentes**.
+
+## L1-05 v3 — curvas contínuas e lançamento adicional (29/10/2026)
+
+- Arquivo: `AutonomoL105FlowerCurvasL2ParkRPMv3.java`.
+- Motivação: vídeo do Meca Sim e imagem com curva azul e setas vermelhas mostram paradas de giro/alinhamento na ida para L2; no segundo L2 faltaram disparos e PARK.
+- Garden → L2: substituídos dois `segmento()` e `aproximarL2()` por Bézier cúbica **em marcha ré**, alvo L2 X=1,574 / Y=3,420 / yaw=180; reduz paradas intermediárias.
+- Flower → L2: após coleta e recuo, gira **uma vez em zona livre** (yaw=128°) e entra na curva de ré até L2 sem passar por um waypoint de parada em Y=3,340.
+- Shooter: mantém `MS_SHOT` durante Flower com `MI=0` e servo fechado; alimentação extra em L2 continua condicionada a três janelas consecutivas de RPM dentro da tolerância e a prazo.
+- PARK: Bézier de avanço que sai de L2 e curva para a área vermelha X=0,255 / Y=2,380 / yaw=90, sem giros intermediários; redução de potência perto das paredes.
+- Validada **compilação sintática Java com stubs** e **simulação cinemática simplificada** das três curvas; **não** validado no Meca Sim ou no robô físico. Ciclo 4+4+4 e PARK em 29,3 segundos ainda não confirmado; contadores de comandos de alimentação não comprovam acertos físicos.
+- Versões anteriores L1-01, L1-02, L1-03, L1-04, L1-05 v1 e v2 preservadas sem modificação.
