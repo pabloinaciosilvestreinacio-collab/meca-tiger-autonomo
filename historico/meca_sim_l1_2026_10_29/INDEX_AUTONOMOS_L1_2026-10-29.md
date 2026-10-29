@@ -90,3 +90,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - Telemetria: duracao de seis fases (L1, Garden, L2 #1, Flower, L2 #2, PARK), velocidade reta estimada, reserva PARK, RPM/estado do controlador e pulsos por posto.
 - Verificacao: `javac` com stubs FTC e modelo cinemático simplificado para a entrada Flower; **sem execução real no Meca Sim e sem teste fisico**. O controle de RPM exige tres amostras antes de cada disparo, mas `pulsos` nao comprovam POLLEN ejetado.
 - Regra: preservar codigo v4 para regressao e nao declarar L1-05 finalizado ate 4+4+4 lançamentos e PARK serem comprovados.
+
+## L1-05 v6 — investigar 3/4 nos postos L2 e Flower (29/10/2026)
+
+- Relato do operador na v5: L1 lançou 4; primeiro L2 lançou 3; retorno a L2 após Flower lançou 3. **Não foi disponibilizada telemetria de estoque ou ejeção**, então o problema pode ser cadência/feeder, coleta incompleta ou prazo.
+- Nova classe independente: `AutonomoL105FlowerCurvasL2ParkRPMv6.java`.
+- Alimentação: L1 mantém intervalo 0.82 s; L2 aumenta 0.70 → 0.84 s; terceiro posto aumenta 0.44 → 0.84 s. Valores experimentais, baseados na diferença entre L1 com quatro e postos com três; não há confirmação do cooldown interno do simulador.
+- Pulso #4 L2/Flower: aberto 0.25 → 0.32 s, pré-alimentação 0.07 → 0.09 s, esvaziamento 0.12 → 0.16 s. Exigir 3 janelas de RPM estável antes de cada disparo.
+- Coleta: MI fica ligado durante a ida e o recuo do Garden e da Flower para reduzir a chance de uma peça ficar na entrada; **sem alterar nenhum waypoint/curva**.
+- Telemetria: horário de comando do último feeder, intervalos reais entre pulsos de L2 e Flower, contadores de pulsos separados. Nenhum contador significa detecção física de POLLEN.
+- Contras: intervalo maior pode consumir tempo de PARK; avaliar tempo final no Meca Sim. Sem confirmação de que saiu 4+4+4.
+- Validação realizada: `javac` com stubs e verificação estática das curvas, destinos e sequência. **Ainda não executado no Meca Sim.** v5 congelada e preservada.
