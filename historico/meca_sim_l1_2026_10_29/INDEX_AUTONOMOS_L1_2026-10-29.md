@@ -53,3 +53,10 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 2WD diferencial; ME, MD, MI, MS, SA e imu; SDK FTC 12.0; roda Ø90 mm; 560 ticks/revolução da roda de locomoção; bitola aprox. 45 cm. `RPM_ALVO_MS_SIM=127` é parâmetro do simulador, **não um RPM físico calibrado**. Potência física 0.60 acertou alvo empiricamente, mas o RPM correspondente ainda precisa ser medido no encoder do MS.
 
 **Política de preservação:** Não substituir classes antigas e não misturar código aprovado no simulador com código validado no robô físico. Aguardar análise de logs/vídeos de L1-04 antes de elevá-lo a aprovado.
+## L1-05 v2 — Correção da volta a L2 e do PARK (29/10/2026)
+
+- Classe independente: `AutonomoL105FlowerRetornaL2RPMv2.java`; `AutonomoL105FlowerRetornaL2RPM.java` foi preservada.
+- Defeito na v1: `segmento()` alcançava Y=3.420 (folga superior de 15 mm) e **depois** chamava `aproximarL2()`, que rejeita folga inicial inferior a 28 mm; isso abortava o terceiro disparo e o PARK.
+- Correção: retornar a Y=3.340 (folga de aproximadamente 95 mm com yaw=180), executar a aproximação fina a L2, tentar 4 disparos extras somente com RPM estável e seguir para PARK X=0.255/Y=2.380.
+- Se o terceiro ciclo não completar por timeout/RPM e ainda houver tempo, tentar PARK e registrar o resultado como parcial, sem alegar 4+4+4.
+- Verificação: compilação Java com stubs concluída; teste Meca Sim e validação física **pendentes**.
