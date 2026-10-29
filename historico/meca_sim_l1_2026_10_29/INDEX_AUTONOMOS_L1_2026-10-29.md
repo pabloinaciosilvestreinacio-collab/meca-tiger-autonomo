@@ -80,3 +80,13 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - Ajuste v4: reserva experimental PARK = 2.35 s (prazo do terceiro ciclo = 26.95 s); intervalo mínimo **somente** do terceiro ciclo = 0.44 s, ainda condicionado a três janelas estáveis de 80 ms por disparo.
 - Novos diagnósticos: instante da chegada a L2, prazo de tiro, primeiro e último pulso, motivo de bloqueio.
 - Rotas/curvas e coordenadas de v3 mantidas, assim como todos os L1 anteriores. Compilação Java **com stubs** concluída, teste Meca Sim pendente. Não garantir 12 POLLEN + PARK sem tempo real/feedback da simulação.
+
+## L1-05 v5 — otimizacao de tempo no Meca Sim (29/10/2026)
+
+- Classe independente: `AutonomoL105FlowerCurvasL2ParkRPMv5.java`, v4 intacta.
+- RPM: monitoramento a cada ~80 ms integrado nos loops de movimento e esperas. Historico de tres amostras estaveis e reaproveitado ao chegar a L2; a estabilidade e reiniciada apos cada pulso alimentador. Encoders do shooter supervisionados por watchdog. `RPM_ALVO_MS_SIM=127` e TICKS_POR_VOLTA_MS=560 sao **parametros exclusivos da simulacao**, nao calibrados fisicamente.
+- Acesso a Flower: substitui saida reta L2 + segmento lateral + giro 0 graus por uma curva continua dedicada, que termina apontando +Y em (X=1.30, Y=3.06). Os demais seguidores de curva ja testados permanecem com a geometria da v4; unico acréscimo e amostragem de RPM e velocidade.
+- Prazo do 3o L2: reserva de PARK dinamica na faixa 2.10..3.10 s baseada em velocidade livre estimada do corredor, com fallback 0.82 m/s. E **estimativa inicial**, nao substitui cronometro no simulador ou margem validada.
+- Telemetria: duracao de seis fases (L1, Garden, L2 #1, Flower, L2 #2, PARK), velocidade reta estimada, reserva PARK, RPM/estado do controlador e pulsos por posto.
+- Verificacao: `javac` com stubs FTC e modelo cinemático simplificado para a entrada Flower; **sem execução real no Meca Sim e sem teste fisico**. O controle de RPM exige tres amostras antes de cada disparo, mas `pulsos` nao comprovam POLLEN ejetado.
+- Regra: preservar codigo v4 para regressao e nao declarar L1-05 finalizado ate 4+4+4 lançamentos e PARK serem comprovados.
