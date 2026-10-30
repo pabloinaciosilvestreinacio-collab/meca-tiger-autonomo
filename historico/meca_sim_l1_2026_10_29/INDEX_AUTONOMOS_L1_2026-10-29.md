@@ -135,3 +135,13 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Validação técnica:** compilação Java 17 com stubs FTC e conferência textual do diff; **ainda sem execução no Meca Sim** e sem validação física.
 - **Comparação desejada:** executar mesmo cenário e observar tempo total, quarto POLLEN após Flower, contagem de TIPs, posição PARK e eventuais movimentos inesperados. Se não houver ganho, não alterar novamente a tolerância indiscriminadamente.
 - **Referência preservada:** v7 imutável em arquivo próprio. Versão anterior de tolerância 2,0° sem melhora fica registrada acima.
+
+## Teste L1-05 v9Tempo — ampliar limite interno (30/10/2026)
+
+- Objetivo solicitado: testar **tolerância de tempo** maior, após o ensaio angular de `TOL_GRAUS = 1.5 -> 2.0` sem melhora perceptível.
+- Baseline: **L1-05 v7** inalterada, pois já houve relato de 4+4+4 com conclusão aproximadamente em 29.34 s no Meca Sim.
+- Mudança funcional isolada: `LIM_GLOBAL = 29.3` -> `29.6` segundos (linha 95 da classe-base). Margem nominal passa de 0.7 para 0.4 s até 30 s. Os prazos derivados de `LIM_GLOBAL` também aumentam 0.3 s.
+- Constantes de tolerância angular, pose L2, RPM, alimentação, sequência e curvas **não mudaram**. `TOL_GRAUS` permanece 1.5°.
+- Código de ensaio: `AutonomoL105FlowerCurvasL2ParkRPMv9Tempo.java` (nome próprio de OpMode). Um arquivo `v8` já existia no repositório com outro experimento de tolerância; preservado sem alterações para não misturar hipóteses.
+- Verificação: comparação contra v7 e compilação `javac --release 17` com stubs FTC; o código publicado e o arquivo local foram verificados pelo mesmo Git blob SHA `46be7c13224ef27a421f852322ba716ec76e4328`.
+- **Resultado do ensaio: pendente.** Não presumir ganho de tempo; ampliar prazo pode atrasar começo do PARK. A execução física FTC não foi validada. Verificar início e fim do PARK, 4+4+4 POLLEN e resultado até os 30 s.
