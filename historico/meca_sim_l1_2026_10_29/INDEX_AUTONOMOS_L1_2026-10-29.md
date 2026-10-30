@@ -124,3 +124,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Interpretação:** o giro estacionário governado por `TOL_GRAUS` não se mostrou gargalo relevante neste ensaio; curvas Bézier e a aproximação de lançamento possuem tolerâncias distintas. Este teste não justifica flexibilizar a tolerância de pose de L2 nem de RPM.
 - **Decisão:** **não incorporar** a alteração à versão de referência. Manter a v7 com `TOL_GRAUS = 1.5`; encerrar esta hipótese de otimização até aparecer telemetria por fase que indique gasto relevante em giros.
 - **Contexto anterior relatado:** em execução recente da v7, o operador observou todos os lançamentos e término por volta de 29,34 s. A contagem foi visual, não confirmada por sensor de ejeção. PARK e total de 12 devem continuar sendo conferidos por execução.
+
+
+## Ensaio seguinte — tolerância angular 2,5° L1-05 v8 (30/10/2026)
+
+- **Pedido:** testar uma tolerância angular maior depois de não observar ganho perceptível de 1,5° para 2,0°.
+- **Candidato:** `AutonomoL105FlowerCurvasL2ParkRPMv8.java`.
+- **Única alteração funcional frente à v7:** `TOL_GRAUS = 1.5` → `2.5` (método de giro estacionário); nome de classe, nome do OpMode e comentários também atualizados.
+- **Permanecem iguais:** tolerâncias de pose em L1/L2 e curvas Bézier, amostras estáveis de RPM, intertravamento MI/MS, alimentação, waypoints, velocidades e PARK.
+- **Validação técnica:** compilação Java 17 com stubs FTC e conferência textual do diff; **ainda sem execução no Meca Sim** e sem validação física.
+- **Comparação desejada:** executar mesmo cenário e observar tempo total, quarto POLLEN após Flower, contagem de TIPs, posição PARK e eventuais movimentos inesperados. Se não houver ganho, não alterar novamente a tolerância indiscriminadamente.
+- **Referência preservada:** v7 imutável em arquivo próprio. Versão anterior de tolerância 2,0° sem melhora fica registrada acima.
