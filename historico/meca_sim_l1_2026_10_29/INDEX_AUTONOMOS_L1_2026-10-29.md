@@ -101,3 +101,15 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - Telemetria: horário de comando do último feeder, intervalos reais entre pulsos de L2 e Flower, contadores de pulsos separados. Nenhum contador significa detecção física de POLLEN.
 - Contras: intervalo maior pode consumir tempo de PARK; avaliar tempo final no Meca Sim. Sem confirmação de que saiu 4+4+4.
 - Validação realizada: `javac` com stubs e verificação estática das curvas, destinos e sequência. **Ainda não executado no Meca Sim.** v5 congelada e preservada.
+
+## L1-05 v7 — intertravamento contra disparo fora de L2 (30/10/2026)
+
+- Relato: na segunda execução do vídeo 30/10/2026, o robô solta POLLEN fora de uma posição de lançamento. Atenção: na interface do vídeo, o projeto selecionado aparece como `AutonomoL105FlowerCurvasL2ParkRPMv5`; a correção foi implementada **sobre v6**, arquivo mais recente fornecido no histórico.
+- Causa encontrada na fonte v6: MI=1.00 durante retorno Garden e durante Flower, simultaneamente com MS~0.60, condição que permite liberação automática de peças no Meca Sim, independentemente do servo. A cadência não era a causa primária desse disparo fora de posição.
+- Correção v7: estado explícito do mecanismo (coleta, trânsito, três postos de disparo, PARK); MS=0.0 durante coleta Garden/Flower; retorno da coleta com MI ativo e MS desligado; MS liga **após MI=0** e acelera durante o deslocamento a L2.
+- Alimentação: antes de CADA tiro, testar pose no posto L1 ou L2, MD/ME com power zero e três medições recentes consecutivas de RPM na faixa. Em caso negativo, não alimentar; telemetria registra bloqueio.
+- Watchdog redundante corta MS se detectar MI>0.50 e MS>0.50 fora da alimentação autorizada. A proteção se baseia em comandos e odometria estimada, NÃO em sensores de POLLEN ou confirmação independente do alvo.
+- Rotas mantidas: Garden guiado, Garden→L2 Bézier, acesso Flower em curva contínua, Flower→L2 Bézier e PARK final X=0.255/Y=2.380; potências, intervalos 0.84 s e limite global 29.3 s da v6 preservados.
+- Validação: compilação `javac --release 17` com stubs FTC, teste unitário simulado de intertravamento (MI/MS e pose L1), comparação estática de todas as coordenadas e três curvas entre v6/v7. **Não houve teste da v7 no Meca Sim ou no robô real**.
+- Risco temporal: MS deixa de preaquecer durante a coleta; isso pode acrescentar spin-up, embora o motor volte a girar em trânsito. A viabilidade de 12 POLLEN + PARK em 29.3s continua não demonstrada. Priorizar integridade da coleta e da pose.
+- Código preservado em `AutonomoL105FlowerCurvasL2ParkRPMv7.java`. Todas as versões v1-v6 permanecem preservadas para regressão.
