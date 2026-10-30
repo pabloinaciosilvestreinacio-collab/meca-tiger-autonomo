@@ -113,3 +113,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - Validação: compilação `javac --release 17` com stubs FTC, teste unitário simulado de intertravamento (MI/MS e pose L1), comparação estática de todas as coordenadas e três curvas entre v6/v7. **Não houve teste da v7 no Meca Sim ou no robô real**.
 - Risco temporal: MS deixa de preaquecer durante a coleta; isso pode acrescentar spin-up, embora o motor volte a girar em trânsito. A viabilidade de 12 POLLEN + PARK em 29.3s continua não demonstrada. Priorizar integridade da coleta e da pose.
 - Código preservado em `AutonomoL105FlowerCurvasL2ParkRPMv7.java`. Todas as versões v1-v6 permanecem preservadas para regressão.
+
+
+## Ensaio de tolerância angular — L1-05 v7 (30/10/2026)
+
+- **Ambiente:** Meca Sim; observação reportada pelo operador. Não equivale a validação no robô físico.
+- **Referência:** `AutonomoL105FlowerCurvasL2ParkRPMv7.java`, preservada no GitHub com `TOL_GRAUS = 1.5` (linha 126 na fonte de referência).
+- **Variável testada:** alteração manual proposta de `TOL_GRAUS` de `1.5` para `2.0` graus, mantendo os demais parâmetros.
+- **Resultado informado:** **não houve mudança perceptível**. O teste anterior foi descrito com conclusão em cerca de **29,34 s**; o operador relatou que alterar a tolerância não melhorou o resultado. **Não foi fornecido novo tempo cronometrado independente**, logo não atribuir ganho zero exato em milissegundos.
+- **Interpretação:** o giro estacionário governado por `TOL_GRAUS` não se mostrou gargalo relevante neste ensaio; curvas Bézier e a aproximação de lançamento possuem tolerâncias distintas. Este teste não justifica flexibilizar a tolerância de pose de L2 nem de RPM.
+- **Decisão:** **não incorporar** a alteração à versão de referência. Manter a v7 com `TOL_GRAUS = 1.5`; encerrar esta hipótese de otimização até aparecer telemetria por fase que indique gasto relevante em giros.
+- **Contexto anterior relatado:** em execução recente da v7, o operador observou todos os lançamentos e término por volta de 29,34 s. A contagem foi visual, não confirmada por sensor de ejeção. PARK e total de 12 devem continuar sendo conferidos por execução.
