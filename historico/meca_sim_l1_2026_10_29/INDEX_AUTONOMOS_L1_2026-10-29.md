@@ -181,3 +181,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Interpretação:** permitir mais tempo para o seguidor atingir L2 não acelera a trajetória. Se o segmento já termina antes do prazo, o resultado deve ser igual; se só termina depois, pode evitar uma falha mas consumir margem de tiro/PARK. O timeout local não sobrepõe o limite global nem `LIM_GLOBAL-3.60` e a reserva dinâmica de PARK.
 - **Verificação:** `javac --release 17` usando interfaces de teste FTC, diff limitado às duas chamadas de timeout e identificadores v12. **Ainda não testado no Meca Sim nem no robô real.**
 - **Novo arquivo:** `AutonomoL105GardenL2TimeoutMaiorRPMv12.java`, GitHub blob `1b2de963ccf89bcc21de670113edcc44f8d9f320`.
+
+## L1-05 v13 — quarto disparo Flower / janela segura (30/10/2026)
+
+- **Motivação:** no vídeo `teste2.mp4`, o operador relatou e o relatório do Meca Sim indicou execução final em aproximadamente **29,57 s**, com **11/12 POLLEN lançados** (11 acertos no HIVE). O vídeo não identifica de modo inequívoco a versão Java carregada; a referência de desenvolvimento é a classe v12.
+- **Hipótese testada:** o prazo do terceiro posto pode vencer durante a preparação ou a execução do quarto disparo (ainda que RPM/pose estejam bons), causando alimentação interrompida e resultado variável.
+- **Nova classe separada:** `AutonomoL105TerceiroL2JanelaSeguraRPMv13.java`, baseada na v12; mantém a transição Garden→L2 sem parada, os dois timeouts locais mais amplos, tolerância de chegada 18 mm, cadência do shooter, `LIM_GLOBAL=29.3s` e curva de PARK.
+- **Mudança principal:** depois de RPM e intervalo liberados, e ANTES de iniciar MI no quarto POLLEN da Flower, calcular uma janela mínima de **0,605 s** (= pré-alimentação 0,09 + pulso completo 0,32 + espera de limpeza 0,16 + margem de laço 0,035). Se não couber no prazo já reservado ao PARK ou no limite global, não começar um pulso que será interrompido. A estratégia prossegue ao PARK e registra a causa; nunca garante quatro objetos sem material disponível ou sem tempo suficiente.
+- **Diagnóstico novo:** motivo da falha do quarto tiro (prazo, encoder, RPM, pose, pré-feed, pulso cortado, limpeza cortada), instante em que RPM ficou pronto, início/fim do pulso, margem de tempo restante antes de alimentá-lo, instante de início/fim do PARK.
+- **Segurança:** disparo somente **parado e na pose L1/L2 validada**, com 3 amostras de RPM estável. NÃO implementa disparo em movimento nem flexibiliza pose/RPM; aumenta previsibilidade, mas **não acelera** a rotina nem recupera o tempo que falta.
+- **Validação:** compilação Java 17 com stubs FTC + análise estática de constantes e curvas. **Ainda não executada no Meca Sim ou no robô físico.** Precisa de teste A/B com v12 e telemetria final, com atenção para `4o Flower estado`, `4o Flower inicio/fim` e `PARK inicio/fim`.
+- **GitHub SHA blob:** `59d0a580376395751aa977f61908baf425b02d55`.
