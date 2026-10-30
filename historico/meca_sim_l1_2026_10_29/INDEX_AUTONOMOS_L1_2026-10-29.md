@@ -160,3 +160,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Validação efetuada:** compilação Java 17 com stubs FTC, análise estática do diff e avaliação geométrica da curva teórica para chassi quadrado de 45 cm, com folga teórica mínima aproximada de 15 mm no ponto final L2. **Não houve teste completo no Meca Sim, nem validação de segurança física.** O seguidor por IMU/encoders e derrapagem podem afetar a transição.
 - **Próximo ensaio A/B:** executar v7 e v10 com a mesma pose inicial/configuração e, se possível, exportar o CSV de trajetória e telemetria. Comparar duração Garden→primeiro L2, velocidade mínima na junção, desvios X/Y e yaw, 4+4+4 alimentações e PARK. Caso oscile, reverter integralmente à v7, não aumentar potência.
 - **Fonte congelada v10 SHA Git blob:** `32b6c4c2c0201fa9535e1766ed1ea5f571ffa95b`.
+
+## L1-05 v11 — teste de tolerância de chegada a L2 (30/10/2026)
+
+- **Motivação:** operador solicitou maior tolerância em L2 após experimento v10 para eliminar freada Garden→L2.
+- **Base:** `AutonomoL105GardenL2SemParadaRPMv10.java`, conservada integralmente.
+- **Mudança funcional isolada:** nas **duas** chamadas do seguidor `seguirBezier` que terminam em L2, aumentar `toleranciaFinal` **0.018 m (18 mm) → 0.025 m (25 mm)**. Primeiro L2 após Garden e segundo L2 após Flower. Os demais trechos não sofrem alteração.
+- **Segurança preservada:** `confirmarPoseL2()` e `validarPoseDisparo()` permanecem com erro X≤0.055 m, erro Y≤0.045 m, yaw≤2.5° e folga superior entre 0.008 e 0.046 m; exige robô parado, RPM estável e alimentador intertravado. Os limites de prevenção de colisão por chassi continuam idênticos.
+- **Sem mudança:** `LIM_GLOBAL=29.3 s` (não incorporar o experimento separado `v9Tempo`), tolerância de giros `TOL_GRAUS=1.5°`, forma e potência das curvas, intake, shooter, pulsos e PARK.
+- **Cuidado:** tolerância espacial maior pode encerrar o movimento alguns milímetros antes; **não** significa que disparo possa ocorrer fora da posição. A geometria útil de lançamento e os dois TIPs precisam ser reconfirmados.
+- **Validação até aqui:** compilação `javac --release 17` com stubs FTC, diff inspecionado e arquivo GitHub verificado com blob `31c6efdf7f7d10feca7c89a86106a4b0f887a945`. **Sem execução v11 no Meca Sim; ganho de tempo desconhecido.**
+- **Teste A/B:** v10 versus v11 com mesma pose inicial e condições; comparar tempo final, tempo até cada L2, 4+4+4 POLLEN, pose em L2 e PARK. Reverter v11 se deslocar o lançamento ou perder pontuação.
