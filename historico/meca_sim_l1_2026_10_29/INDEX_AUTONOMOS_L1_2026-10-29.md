@@ -171,3 +171,13 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Cuidado:** tolerância espacial maior pode encerrar o movimento alguns milímetros antes; **não** significa que disparo possa ocorrer fora da posição. A geometria útil de lançamento e os dois TIPs precisam ser reconfirmados.
 - **Validação até aqui:** compilação `javac --release 17` com stubs FTC, diff inspecionado e arquivo GitHub verificado com blob `31c6efdf7f7d10feca7c89a86106a4b0f887a945`. **Sem execução v11 no Meca Sim; ganho de tempo desconhecido.**
 - **Teste A/B:** v10 versus v11 com mesma pose inicial e condições; comparar tempo final, tempo até cada L2, 4+4+4 POLLEN, pose em L2 e PARK. Reverter v11 se deslocar o lançamento ou perder pontuação.
+
+## L1-05 v12 — tolerância de TEMPO para chegada ao L2 (30/10/2026)
+
+- Correção de entendimento solicitada pelo operador: deseja aumentar **timeout** para L2, não aumentar os milímetros de tolerância espacial.
+- **Base v10** (`AutonomoL105GardenL2SemParadaRPMv10.java`) preservada; a v11, que ensaiava 25 mm de tolerância espacial, também permanece arquivada e **não** foi incorporada.
+- **Mudanças funcionais isoladas:** timeout da Bézier **Garden→primeiro L2 de 6.5 para 7.0 segundos**; timeout da Bézier **Flower→L2 de 3.0 para 3.5 segundos**.
+- **Mantido:** tolerância final de ambos os trechos **0.018 m (18 mm)**, intertravamento de posição e RPM de disparo, coord. e curvas, motores, cadência de lançamentos, PARK e `LIM_GLOBAL=29.3 s`.
+- **Interpretação:** permitir mais tempo para o seguidor atingir L2 não acelera a trajetória. Se o segmento já termina antes do prazo, o resultado deve ser igual; se só termina depois, pode evitar uma falha mas consumir margem de tiro/PARK. O timeout local não sobrepõe o limite global nem `LIM_GLOBAL-3.60` e a reserva dinâmica de PARK.
+- **Verificação:** `javac --release 17` usando interfaces de teste FTC, diff limitado às duas chamadas de timeout e identificadores v12. **Ainda não testado no Meca Sim nem no robô real.**
+- **Novo arquivo:** `AutonomoL105GardenL2TimeoutMaiorRPMv12.java`, GitHub blob `1b2de963ccf89bcc21de670113edcc44f8d9f320`.
