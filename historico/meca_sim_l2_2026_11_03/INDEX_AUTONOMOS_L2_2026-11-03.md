@@ -4,7 +4,7 @@
 
 - **L2-01:** verificar estado de TIP oposto (futura integração de visão) → lançar 4 POLLEN diretamente da largada em L2 → PARK parcial esquerdo. O baseline V1 **não** verifica TIP automaticamente.
 - **L2-02:** após lançamento, coletar na Flower superior → PARK, com ensaios de trajetória, alimentação e tempo separados.
-- **L2-03:** disparar e avaliar varredura/alternativas condicionadas a evidência de TIP e tempo; não interpretar AprilTag isolada como prova de TIP.
+- **L2-03:** **CANCELADA E EXCLUÍDA da branch atual** por decisão do operador (03/11/2026). Não usar nem refatorar como estratégia ativa.
 - Hardware 2WD diferencial, ME/MD/MI/MS/SA/imu, câmera Logitech C270 para integração posterior. Java e cada estratégia em classes independentes; versões L1 preservadas.
 - **IMPORTANTE:** a decisão de **não fazer PARK** se aplica à estratégia ofensiva L1-05 de três ciclos/12 POLLEN para dois TIPs. Não é regra geral de todo código L2.
 
