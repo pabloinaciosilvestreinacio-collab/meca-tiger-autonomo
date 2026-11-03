@@ -253,3 +253,15 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 **Limitação fundamental:** distância euclidiana entre (X=1.574,Y=3.420) e (X=.255,Y=2.380) é ~1.68 m. Se o quarto lançamento terminar tarde demais, PARK em <30 s é inviável mesmo em potência máxima; v16 evita interrupção precoce, **não promete PARK e dois TIPs**. Meca Sim é limitado a v máx ~1m/s e possui aceleração/frenagem. Precisamos medir instantes do último tiro e início/chegada PARK; se saída depois ~28.2 s, a meta provavelmente é inviável e precisa de otimização de tempos anteriores. Tentar 30+ s seria incompatível com partida.
 
 **Validação:** Java 17 compilou com stubs FTC do projeto de testes; diff v15→v16 conferido e restrito. Não testado com execução completa do Meca Sim nem no robô real. v15 preservada. Blob GitHub: `b76819c0a7b3b6b82a80bff3c62e0d04dd4c7d00`. 
+
+## L1-05 v17 — dois TIPs, terminar PARADO em L2 (03/11/2026)
+
+**Nova decisão estratégica do operador:** para o autônomo de três ciclos de 4 POLLEN que busca dois TIPs, abandonar completamente o PARK; com base diferencial 2WD (sem mecanum) e o tempo necessário, tentar estacionar não é prioridade. Ao encerrar os 4 disparos após retornar da Flower, **ficar no L2 com motores desligados**.
+
+- **Base:** v16; nova classe `AutonomoL105DoisTipsParadaL2RPMv17.java`, OpMode `TESTE L1-05 V17 2 TIPS SEM PARK`. V16 e anteriores preservados.
+- **Fluxo:** L1 4 tiros → Garden coleta → L2 4 tiros → Flower coleta → retorno ao L2 → **últimos 4 tiros (terceira sequência)** → `ME=MD=MI=MS=0`, servo fechado, **imobilizado em L2**; não aciona curva/retorno/PARK.
+- **Prazo:** sem reserva de PARK nem `LIM_PARK`; limite global `LIM_GLOBAL=29.95s` (50 ms de margem para os 30 s), `deadlineTerceiro = LIM_GLOBAL-0.02s`. A v16 tinha `LIM_GLOBAL=29.3` para tiros. Esta é mudança funcional adicional para aproveitar o tempo do autônomo na terceira sequência.
+- **Preservado:** trajetórias e potências até a chegada ao L2 pela terceira vez, intervalos 0.84s, pose validada, RPM estável antes de cada alimentação, MI/MS com intertravamento e pulso de 0.32s no último POLLEN. Não lançar em movimento.
+- **Limite da evidência:** contagem de pulsos não é sensor de bola, nem prova acerto no HIVE ou dois TIPs. Ainda não foi executada no Meca Sim nem no robô real. Se o quarto pulso não couber no período, registrar parcial e permanecer em L2.
+- **Verificação local:** compilação `javac --release 17` contra stubs FTC pré-existentes bem-sucedida; checagem estática de ausência da curva PARK e de existência dos dois únicos trechos Bezier ativos de L2.
+- **GitHub blob:** `20c171fa2b1368efd60fba76a2e31e45aefb1025`.
