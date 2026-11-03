@@ -222,3 +222,14 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Decisão técnica:** congelar v13 como **não aprovada**; v14 **experimental não executada nesta gravação e NÃO RECOMENDADA** para validação competitiva porque permite saída em movimento durante o quarto pulso e aumenta `LIM_GLOBAL=29.8 s`, podendo degradar acerto/PARK. Não sobrescrever nem apagar histórico.
 - **Baseline para reteste:** `AutonomoL105FlowerCurvasL2ParkRPMv7.java` (fonte arquivada, `TOL_GRAUS=1.5`, `LIM_GLOBAL=29.3`). Executar exatamente essa classe/OpMode com pose inicial X=1.530,Y=0.255,yaw=0, obter CSV+relatório JSON e screenshots de telemetria final. Registrar 4+4+4 por contagem visual, instante de cada lançamento, pose final e ausência de impacto indevido. Somente então adicionar uma modificação por ensaio.
 - **Sem nova versão criada** com base apenas neste vídeo: evitar repetir alterações não identificáveis. Caso seja necessário desenvolver v15, ela deve isolar uma única hipótese com marca inequívoca no OpMode e comparação A/B com v7.
+
+## L1-05 v15 — testar causa raiz do quarto POLLEN (03/11/2026)
+
+- **Base:** v7 integral (2.373 linhas) preservada; v15 em arquivo/classe e OpMode distintos.
+- **Hipótese:** o quarto disparo Flower era suprimido porque `deadlineTerceiro = LIM_GLOBAL - reservaParkCalculada` (prazo antecipado de 2.1–3.1 s antes do limite global). O intervalo Flower ainda é 0.84 s e exige RPM estabilizado; o corte é independente da presença de tempo legal remanescente.
+- **Única mudança funcional:** `deadlineTerceiro = LIM_GLOBAL - 0.05;` — a reserva do PARK passa a ser somente telemetria; não bloqueia antecipadamente a terceira sequência.
+- **Preserva:** `LIM_GLOBAL=29.3`, 4+4+4, pose parada de L2, RPM 3 amostras, servo 0.32 s último pulso, limpeza 0.16 s, trajetórias/velocidades/park da v7, `INTERVALO_TIROS_TERCEIRO=0.84`, intertravamento MS desligado na coleta.
+- **Critério:** testar se o quarto POLLEN é efetivamente ejetado e acerta o HIVE, e medir quando o PARK começa/conclui. Se precisar de mais tempo que `LIM_GLOBAL`, a prioridade ao tiro não poderá contornar o limite; aí será necessário reduzir tempo de trajetória ou alimentação após medir gargalo. **Não garantir dois TIPs pelo número de pulsos ou acertos simulados.**
+- **Risco:** o PARK pode não ser alcançado, pois deixou de ter tempo reservado. Essa perda é explícita e deve ser validada em comparação A/B com a v7 original.
+- **Verificação:** compila com `javac --release 17` e stubs FTC, diff exato: mudança de prazo, classe, OpMode e labels da versão. **Não testada no Meca Sim nem robô real.**
+- **Arquivo:** `AutonomoL105FlowerQuartoPrioritarioRPMv15.java`, GitHub blob `4f6b2fa5da41e720ea636981de4925cade078b37`.
