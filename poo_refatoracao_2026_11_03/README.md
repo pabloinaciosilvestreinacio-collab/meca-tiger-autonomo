@@ -48,3 +48,17 @@ Cenários: ticks por metro, deslocamento de 560 ticks a 0° e a 90°, cruzamento
 5. Visão/TIP somente depois da etapa de teste de câmera autorizada.
 
 **Testes de regressão obrigatórios:** mesma pose inicial, mesmo perfil Meca Sim, mesmo tempo máximo, mesma rota, quatro/ oito/ doze POLLEN efetivamente ejetados (não apenas pulsos), pose final e desligamento seguro.
+
+## Auditoria completa dos oito arquivos e manual para manutenção (03/11/2026)
+
+A lista operacional contém **7 estratégias numeradas, representadas por 8 fontes de referência**:
+`L1-01`, `L1-02`, `L1-03`, `L1-04 v1`, `L1-04 v2`, `L1-05 v17`, `L2-01 v1`, `L2-02 v2`. O L1-04 foi anteriormente omitido de um resumo, mas **não está excluído**: v1 e v2 continuam **experimentais**, com erro de coordenada Flower corrigido somente na v2. O L2-03 foi removido, e o 5.3 agressivo é legado separado desta contagem.
+
+Documentos produzidos:
+- [**Catálogo auditado**](CATALOGO_AUDITADO_8_AUTONOMOS_2026-11-03.md): fontes exatas, 296 constantes e seus valores, todos os métodos, motores, sensores, coordenadas e riscos por versão.
+- [**Manual prático de ajustes**](GUIA_PRATICO_AJUSTES_POO_MEQUINHA_2026-11-03.md): servo aberto/fechado/tempo, cadência, RPM, intake, rotas, checklist de teste e plano futuro de câmera/HIVE.
+- [**AjustesAutonomoMequinha.java**](src/org/firstinspires/ftc/teamcode/meca/AjustesAutonomoMequinha.java): arquivo único e legível com parâmetros compartilhados **e perfis históricos explicitamente diferentes** (L1-03 vs L1-05, etc.).
+
+**Importante:** o arquivo de ajustes é um **primeiro módulo, não ligado aos OpModes antigos**. Alterá-lo ainda **não** muda o comportamento das oito fontes. Quando forem convertidas, verificar a equivalência linha a linha e testar A/B com cópias, sem editar o original. Não ativar câmera nos autônomos do Meca Sim atualmente: `CameraHive.java` é somente plano futuro e só deve ser introduzida no SDK real depois de validação.
+
+**Testes locais de código-fonte:** compilação Java 17 com interfaces simuladas FTC, 14 verificações POO existentes + 5 verificações de parâmetros novos = **19 verificações aprovadas**. Nenhum build Gradle/FTC SDK real nem execução de rotas no Meca Sim são implicados por esses resultados.
