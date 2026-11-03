@@ -192,3 +192,22 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Segurança:** disparo somente **parado e na pose L1/L2 validada**, com 3 amostras de RPM estável. NÃO implementa disparo em movimento nem flexibiliza pose/RPM; aumenta previsibilidade, mas **não acelera** a rotina nem recupera o tempo que falta.
 - **Validação:** compilação Java 17 com stubs FTC + análise estática de constantes e curvas. **Ainda não executada no Meca Sim ou no robô físico.** Precisa de teste A/B com v12 e telemetria final, com atenção para `4o Flower estado`, `4o Flower inicio/fim` e `PARK inicio/fim`.
 - **GitHub SHA blob:** `59d0a580376395751aa977f61908baf425b02d55`.
+
+## L1-05 v14 — video teste3, prioridade ao 4º POLLEN (03/11/2026)
+
+**Evidência visual:** gravação `teste3.mp4` (48,68 s), analisada integralmente, incluindo preparação, execução e relatório final. O simulador encerrou em **29,57 segundos**, com **11 elementos lançados**, **8 elementos coletados** e **6 pontos estimados**. Relatório indica **0 TIPs simulados** e missão **não avaliada pelo simulador**. Isto NÃO comprova dois TIPs nem permite afirmar que o problema tenha sido exclusivamente prazo/servo; requer observação do quarto evento e regras de pontuação do ambiente.
+
+**Identificação da versão no vídeo:** menu mostra projeto nomeado `AutonomoL105FlowerCurvasL2ParkRPMv6`, mas editor mostra **2390 linhas** e variável `LIM_GLOBAL=29.55`. Isto é compatível com fonte da família v12 editada manualmente, não com v13 pura (2471 linhas). Portanto **não atribuir o teste à v13 sem confirmação da fonte compilada**.
+
+**Defeito confirmado na lógica de base:** `deadlineTerceiro = LIM_GLOBAL - reservaParkCalculada` e v13 exige ainda uma janela completa antes do quarto disparo. O quarto pode ser vetado pela reserva do PARK, mesmo existindo tempo legal para iniciar o feed.
+
+**Nova classe experimental:** `AutonomoL105QuartoPollenPrioritarioMovimentoSIMv14.java` (derivada de v13; anteriores preservadas). Melhorias:
+- **Prioridade:** tentar completar quarto POLLEN da Flower, tratando reserva dinâmica do PARK como informação diagnóstica, NÃO corte. Novo prazo do terceiro posto = `LIM_GLOBAL - 0.055`.
+- **Limite global experimental:** 29,80 s (0,20 s abaixo dos 30s). Se não couber mais nem 0,20 s para iniciar alimentação, o tiro é vetado pelo limite físico; caso caiba início mas não a janela inteira de 0,605 s, o sistema **ainda tenta** e registra pulso parcial se for cortado.
+- **Simulador apenas:** no quarto feed após Flower, verificar a pose L2, robô parado e RPM estável **antes** de alimentar. Após 0,13 s de pulso com robô parado, iniciar avanço reto lento `P=0.23` durante a cauda do alimentador e limpeza. Abortar somente o movimento caso yaw >2,5°, desvio X>60 mm ou Y fora da zona prevista; conserva pulso e bloqueios de segurança. Esta sobreposição visa não desperdiçar tempo parado.
+- O PARK continua sendo tentado, mas **pode falhar por tempo**, pois o quarto tiro foi priorizado. Não prometer 12 tiros, TIPs ou PARK concluídos; nenhum sensor verifica ejeção, e lançamento em movimento pode afetar precisão.
+- **Não portar ao robô físico sem revalidar:** opção `SIM_SAIDA_COM_QUARTO=true` é exclusiva do simulador; desligá-la em hardware físico, validar contato, alcance, estabilidade e regras de disputa.
+- **Sem alterações de rota:** Garden→L2, Flower→L2, PARK e tolerâncias de movimento/RPM da v13 mantidas.
+- **Verificação:** `javac --release 17` em stubs FTC; teste isolado da função de avanço durante pulso; checagem estática de coordenadas, RPM e intervalos. **Sem execução integral no Meca Sim ainda.**
+- **OpMode a selecionar:** `TESTE L1-05 V14 4o OBRIGATORIO`. Antes de testar, conferir que o código compilado é de fato a classe v14, porque o projeto mostrado no vídeo não era v13 pura.
+- **GitHub blob:** `ac2a69e62eb6c27ae304f838a39a72290aad2ab0`.
