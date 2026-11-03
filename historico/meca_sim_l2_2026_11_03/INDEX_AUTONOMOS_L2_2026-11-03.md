@@ -46,3 +46,13 @@
 - **Rota:** entrada na Flower e curva de retorno adaptadas da familia L1-05 v7; a versão nova é **somente candidata**, não testada integralmente no Meca Sim. A posição de largada, o corredor, a coleta de 4 POLLEN e PARK ainda precisam de validação real em execução.
 - **Verificação realizada:** `javac --release 17` com stubs FTC/Vision locais (simula presença das classes, não testa pipeline/câmera). Inspeção de 2 grupos de disparos, captura TIP duas vezes, intertravamento no intake, retorno e condição PARK. Nenhum resultado simulado de acerto/TIP/PARK ainda comprovado.
 - **Próximo teste:** amanhã, confirmar compatibilidade da webcam/AprilTag SDK e reconhecimento dos 4 clusters; depois executar L2-02 sem alterar variáveis, inspecionando 4+4 lançamentos reais, dois estados visuais, coleta Flower, último 4º pulso, tempo para PARK e pose final.
+
+## Decisão do operador: SEM CÂMERA por enquanto (03/11/2026)
+
+- Pedido explícito: **não incorporar visão, VisionPortal, webcam, AprilTags, clusters nem checagem automática de TIP nos novos códigos L2 até a etapa própria de testes**.
+- L2-01 v2 com câmera **fica arquivada e não deve ser utilizada no teste atual**. Para L2-01 sem câmera, a v1 já existe.
+- L2-02 v1 tinha visão integrada indevidamente. Corrigida numa nova classe `AutonomoL202Flower8PollenSemCameraRPMv2.java` com OpMode `TESTE L2-02 V2 SEM CAMERA`, 715 linhas; removidos os sete imports de visão, campos e métodos VisionPortal/AprilTag e as quatro janelas de observação. O código não faz nenhuma inferência de TIP: telemetria `NAO VERIFICADO: SEM CAMERA`.
+- Preservados: pose L2 provisória (1.574,3.420,180°), quatro tiros em L2, percurso Flower e coleta com MS desligado, retorno L2, quatro tiros extras, RPM e intertravamento de alimentação, PARK condicional a 4.00s de margem, LIMITE_TOTAL=29.30s.
+- Projeto Meca Sim: `MecaSim_L2_02_v2_Flower8PollenSemCamera.json`, `source` corresponde byte a byte ao Java produzido.
+- **Verificação técnica:** compilação javac --release 17 usando APENAS 9 stubs básicos FTC, excluindo vision, WebcamName e android.util. Inspeção textual sem referências de câmera e comparando pontos principais da estratégia. **Não houve simulação integral Meca Sim ou teste físico**. Testar a geometria e avaliar 4+4 lançamentos reais antes de aprovar.
+- **Próximas versões L2-03 e outras:** SEM câmera até o usuário autorizar expressamente retomar visão. Não interpretar pulsos de feeder como TIP realizado.
