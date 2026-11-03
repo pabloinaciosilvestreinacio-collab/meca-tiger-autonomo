@@ -233,3 +233,23 @@ Equipe Meca Tiger FTC #32578. Arena BIOBUZZ, ambiente Meca Sim.
 - **Risco:** o PARK pode não ser alcançado, pois deixou de ter tempo reservado. Essa perda é explícita e deve ser validada em comparação A/B com a v7 original.
 - **Verificação:** compila com `javac --release 17` e stubs FTC, diff exato: mudança de prazo, classe, OpMode e labels da versão. **Não testada no Meca Sim nem robô real.**
 - **Arquivo:** `AutonomoL105FlowerQuartoPrioritarioRPMv15.java`, GitHub blob `4f6b2fa5da41e720ea636981de4925cade078b37`.
+
+## L1-05 v16 — fix para PARK cortado por prazo global (03/11/2026)
+
+**Relato do operador:** na v15, robô "para do nada sem fazer PARK". Ainda não há vídeo/CSV desta execução, então o ponto exato da parada não foi confirmado, mas o controle de fluxo do Java revela causa suficiente para este tipo de ocorrência.
+
+**Causa no código v15:** 
+1. `deadlineTerceiro=LIM_GLOBAL-0.05=29.25` permite deixar o terceiro tiro consumir quase toda a janela de 29.3 s.
+2. `prazoEsgotado()` era global até dentro de `seguirBezier(PARK)`, fazendo o robô parar aos 29.3 s, sem reserva.
+3. `if (!terceiroCompleto) { if (... || prazoEsgotado()) return; }` evitava até mesmo entrar no PARK após tiro incompleto quando o relógio já passara de 29.3 s.
+
+**v16 (classe separada `AutonomoL105FlowerQuartoEParkPrazoSeparadoRPMv16.java`):** 
+- Mantém limite de alimentação `LIM_GLOBAL=29.3` e `deadlineTerceiro=29.25`. 
+- Novo limite exclusivo de navegação do PARK `LIM_PARK=29.95` dentro de `prazoEsgotado()`, aplicado quando `modoMecanismo==PARK`.
+- Remove abortamento prematuro no bloco de disparo incompleto, permitindo tentar PARK até 29.95 enquanto ativo.
+- Telemetria final com tempo, contagem de pulsos por posto, limite do PARK e motivo de falha.
+- Geometria, RPM, MI/MS, intervalos, potência e rota da v15 preservados (apenas controle de tempo de PARK e labels alterados).
+
+**Limitação fundamental:** distância euclidiana entre (X=1.574,Y=3.420) e (X=.255,Y=2.380) é ~1.68 m. Se o quarto lançamento terminar tarde demais, PARK em <30 s é inviável mesmo em potência máxima; v16 evita interrupção precoce, **não promete PARK e dois TIPs**. Meca Sim é limitado a v máx ~1m/s e possui aceleração/frenagem. Precisamos medir instantes do último tiro e início/chegada PARK; se saída depois ~28.2 s, a meta provavelmente é inviável e precisa de otimização de tempos anteriores. Tentar 30+ s seria incompatível com partida.
+
+**Validação:** Java 17 compilou com stubs FTC do projeto de testes; diff v15→v16 conferido e restrito. Não testado com execução completa do Meca Sim nem no robô real. v15 preservada. Blob GitHub: `b76819c0a7b3b6b82a80bff3c62e0d04dd4c7d00`. 
