@@ -70,3 +70,13 @@
 - **Riscos:** tempo total pode ultrapassar 29.3s se deslocamentos/tiros demorarem; PARK condicional pode ser omitido. A rotação local na entrada Garden e correção de yaw no recuo exigem confirmação com quadrado de 45cm e HIVE. Coletar 4 objetos não é garantido pelo movimento.
 - **Próxima validação A/B:** executar na pose informada no Meca Sim, conferir 4/4 iniciais, percurso Garden e retorno com folga, 4/4 finais, total e estado PARK; obter vídeo/CSV antes de mexer em velocidade, RPM ou acrescentar Flower.
 - **Arquivo preservado:** L2-01 v1, L2-01 v2 (visão reservada para depois), L2-02 v1 e v2 e todos L1 permanecem sem modificação.
+
+## 03/11/2026 — L2-03 CANCELADO, ENCERRAMENTO DE ROTAS E INICIO DA POO
+
+**Decisão definitiva do operador:** descartar `AutonomoL203Garden8PollenSemCameraRPMv1.java` por planejamento inadequado (travessia L2→Garden longa demais para vantagem de 4+4), e seu JSON associado. Ambos **excluídos da branch main** e removidos da Biblioteca (lixeira), mantendo somente o registro de decisão neste índice; os commits Git históricos permanecem acessíveis e nao foram reescritos.
+
+**Códigos ativos para teste, sem câmera:** `L2-01 v1` (4 POLLEN + PARK), `L2-02 v2` (4 + Flower + 4 + PARK condicional). `L2-01 v2` de visão permanece arquivada, não se deve usar nas execuções atuais. Estratégias L1-01/02/03 concluídas pelo operador no simulador; L1-05 v17 de 12 tiros sem PARK compilada, ainda sem comprovação integral de 12 lançamentos.
+
+**Fim de criação de novas rotas:** próximos trabalhos são teste físico, visão de TIP em etapa futura separada, testes integrais Meca Sim ainda ausentes e **refatoração POO conservadora**. Não confundir "código completo" com "validado em hardware" ou mesmo "aprovado no simulador".
+
+**POO fase 1:** arquivos compartilháveis de `ParametrosMequinha`, `PoseMequinha`, `HardwareMequinha`, `OdometriaDiferencial` e OpMode diagnóstico inerte, em `poo_refatoracao_2026_11_03`. L1/L2 originais NÃO serão modificados automaticamente; extrair por etapas, com testes A/B. Nenhuma câmera/apriltag neste módulo.
